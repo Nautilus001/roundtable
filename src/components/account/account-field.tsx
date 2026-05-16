@@ -4,8 +4,8 @@ import { useAuthContext } from '@/hooks/use-auth-context'
 
 interface AccountFieldProps {
     placeholder: string,
-    value: string;
-    setValue: (text: string) => void;
+    value: string
+    setValue: (text: string) => void
 }
 
 const AccountField = ({placeholder, value, setValue}: AccountFieldProps ) => {

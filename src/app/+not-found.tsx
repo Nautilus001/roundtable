@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const NotFound = () => {
-    const router = useRouter();
+    const router = useRouter()
     return (
         <View>
             <Text>NotFound</Text>

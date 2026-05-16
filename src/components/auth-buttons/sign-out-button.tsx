@@ -6,7 +6,7 @@ import { Button } from 'react-native'
 
 
 export default function SignOutButton() {
-  const { signout, user } = useAuthContext();
+  const { signout, user } = useAuthContext()
   return <Button title="Sign out" onPress={() => {
     signout()
     

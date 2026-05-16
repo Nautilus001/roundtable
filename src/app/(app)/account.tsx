@@ -1,22 +1,22 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useAuthContext } from '@/hooks/use-auth-context'
-import AccountField from '@/components/account/account-field';
-import SignOutButton from '@/components/auth-buttons/sign-out-button';
+import AccountField from '@/components/account/account-field'
+import SignOutButton from '@/components/auth-buttons/sign-out-button'
 
 const AccountView = () => {
-    const { profile, email } = useAuthContext();
-    const [firstName, setFirstName] = useState<string>(profile?.first_name ?? "");
-    const [lastName, setLastName] = useState<string>(profile?.last_name ?? "");
-    const [username, setUserName] = useState<string>(profile?.username ?? "");
+    const { profile, email } = useAuthContext()
+    const [firstName, setFirstName] = useState<string>(profile?.first_name ?? "")
+    const [lastName, setLastName] = useState<string>(profile?.last_name ?? "")
+    const [username, setUserName] = useState<string>(profile?.username ?? "")
 
     useEffect(() => {
         if (profile) {
-            setFirstName(profile.first_name ?? "");
-            setLastName(profile.last_name ?? "");
-            setUserName(profile.username ?? "");
+            setFirstName(profile.first_name ?? "")
+            setLastName(profile.last_name ?? "")
+            setUserName(profile.username ?? "")
         }
-    }, [profile]);
+    }, [profile])
 
     async function handleUpdate() {
         //do nothing yet.

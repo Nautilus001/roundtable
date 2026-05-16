@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 function RootNavigator() {
   const { claims, isLoading } = useAuthContext()
-  const segments = useSegments();
+  const segments = useSegments()
   
   return (
       <Stack screenOptions={{headerShown: false}}>

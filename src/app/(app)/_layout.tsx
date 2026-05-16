@@ -5,6 +5,7 @@ const AppLayout = () => {
   return (
     <Stack screenOptions={{headerShown: false}}>
         <Stack.Screen name="account"/>
+        <Stack.Screen name="goopy"/>
     </Stack>
   )
 }

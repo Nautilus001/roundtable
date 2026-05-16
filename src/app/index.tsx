@@ -1,26 +1,48 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useAuthContext } from '@/hooks/use-auth-context';
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native'
+import { Link, router, useRouter } from 'expo-router'
+import { useAuthContext } from '@/hooks/use-auth-context'
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isRegister, setIsRegister] = useState(false);
-  const { login, register, claims} = useAuthContext();
-  const router = useRouter();
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState<string | null>(null);
+  const [isRegister, setIsRegister] = useState(false)
+  const { login, register} = useAuthContext()
+
+  const router = useRouter()
 
   const handleSubmit = async () => {
+    setError(null);
     if(isRegister){
-      await register(email, password);
-      setIsRegister(false); 
+      try {
+        await register(email, password)
+        setIsRegister(false)
+        router.replace("/account")
+      } catch (error: any) {
+        setError(error.message)
+        setIsRegister(true)
+      }
     } else {
-      await login(email, password);
+      try {
+        await login(email, password)
+        router.replace("/account")
+      } catch (error: any) {
+        setError(error.message)
+      }
     }
-  };
+  }
+
+  function handleSwitch() {
+    setIsRegister(!isRegister)
+    setError(null)
+    setEmail("")
+    setPassword("")
+  }
 
   return (
     <View style={styles.container}>
+
       <Text style={styles.title}>Welcome {isRegister ? "" : "Back"}</Text>
       
       <TextInput
@@ -40,17 +62,24 @@ export default function LoginScreen() {
         secureTextEntry
       />
 
+      
+
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>{isRegister ? "Sign Up" : "Login"}</Text>
       </TouchableOpacity>
 
+      {error &&
+      <View style={styles.buttonSecondary}>
+      <Text style= {styles.errorText}>An error has occurred: {error}</Text>
+      </View>}
+
       
-      <TouchableOpacity style={styles.buttonSecondary} onPress={() => setIsRegister(!isRegister)}>
+      <TouchableOpacity style={styles.buttonSecondary} onPress={handleSwitch}>
         <Text> {isRegister ? "Been here before?" : "New here?" } </Text>
         <Text style={styles.buttonSecondaryText}>{isRegister ? "Login" : "Sign Up!"}</Text>
       </TouchableOpacity>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -99,5 +128,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     fontStyle: 'italic',
+  },
+  errorText: {
+    color: '#d61d1d',
+    fontSize: 14,
+    fontWeight: '400',
+    fontStyle: 'italic',
   }
-});
+})
