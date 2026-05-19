@@ -7,14 +7,16 @@ import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 function RootNavigator() {
-  const { claims, isLoading } = useAuthContext()
-  const segments = useSegments()
+  const { claims } = useAuthContext()
   
   return (
       <Stack screenOptions={{headerShown: false}}>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Protected guard={!claims}>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+        </Stack.Protected>
         <Stack.Protected guard={!!claims}>
           <Stack.Screen name="(app)" options={{ headerShown: false }} />
+          <Stack.Screen name="getting-started"/>
         </Stack.Protected>
         <Stack.Screen name="+not-found" />
       </Stack>

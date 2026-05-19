@@ -1,44 +1,39 @@
 import React, { useEffect, useState } from 'react'
 import { AuthContext } from '@/contexts/auth-context'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/services/supabase'
+import { fetchProfile } from '@/services/profiles'
+import { getAuthSessionData, signInWithEmail, signUpWithEmail, signOutUser } from '@/services/auth'
 import { Alert } from 'react-native'
-
-
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [claims, setClaims] = useState<Record<string, any> | null | undefined>(null)
-    const [user, setUser] = useState<any>()
-    const [email, setEmail] = useState("")
+    const [profile, setProfile] = useState<any>(null)
     const [isLoading, setLoading] = useState<boolean>(false)
-    const [profile, setProfile] = useState<any>()
 
     async function fetchUserDataAndClaims() {
         setLoading(true)
-        
-        const [userResponse, claimsResponse] = await Promise.all([
-            supabase.auth.getUser(),
-            supabase.auth.getClaims()
-        ])
-
-        const userData = userResponse.data
-        if (userData && userData.user) {
-            setUser(userData.user)
-            setEmail(userData.user.email ?? "")
-        } else {
-            setUser(null)
-        }
-
-        const claimsData = claimsResponse.data
-        if (claimsData && claimsData.claims) {
-            setClaims(claimsData.claims)
-            const { data } = await supabase.from('profiles').select('*').eq('id', claimsData.claims.sub).single()
-            setProfile(data)
-        } else {
-            setClaims(null)
-        }
-        setLoading(false)
-    }
+        try { 
+            const data = (await getAuthSessionData()).data
     
+            if (data && data.claims) {
+                setClaims(data.claims)
+
+                const { data: profileData, error } = await fetchProfile(data.claims.sub)
+                
+                if (error) {
+                    console.error("Error fetching profile:", error)
+                }
+                setProfile(profileData)
+            } else {
+                setClaims(null)
+                setProfile(null)
+            }
+        } catch (error: any) {
+            console.error("Unexpected error in fetchUserDataAndClaims:", error)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     useEffect(() => {
         fetchUserDataAndClaims()
@@ -55,20 +50,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     async function register(emailParam: string, passwordParam: string) {
         try {
             setLoading(true)
-            const { data: d, error: e } = await supabase.auth.signUp({
-                email: emailParam,
-                password: passwordParam,
-            })
-            if (e) throw e
-            else {
-                const {data: d2, error: e2} = await supabase.auth.signInWithPassword({
-                    email: emailParam,
-                    password: passwordParam
-                })
-                if (e2) throw e2
-                console.log(d2)
-                return {data: d2, error: null}
-            }            
+            await signUpWithEmail(emailParam, passwordParam)
+            const data = await signInWithEmail(emailParam, passwordParam)
+            return { data, error: null }
         } catch (e: any) {
             throw Error(e.message)
         } finally {
@@ -79,11 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     async function login(emailParam: string, passwordParam: string) {
         try {
             setLoading(true)
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: emailParam,
-                password: passwordParam,
-            })
-            if (error) throw error
+            const data = await signInWithEmail(emailParam, passwordParam)
             return { data, error: null }
         } catch (e: any) {
             throw Error(e.message)
@@ -95,8 +75,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     async function signout() {
         try {
             setLoading(true)
-            const { error } = await supabase.auth.signOut()
-            if (error) throw error
+            await signOutUser()
         } catch (e: any) {
             console.error("Error signing out: ", e.message)
             Alert.alert(e.message)
@@ -105,20 +84,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }
 
+    async function refreshProfile() {
+        if (claims?.sub) {
+            setLoading(true)
+            try {
+                const { data: profileData, error } = await fetchProfile(claims.sub)
+                if (error) console.error("Error refreshing profile:", error)
+                setProfile(profileData)
+            } catch (error) {
+                console.error("Unexpected error refreshing profile:", error)
+            } finally {
+                setLoading(false)
+            }
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{
-            claims,
-            profile,
-            isLoading,
-            user,
-            email,
-            login,
-            register,
-            signout
-        }}
-        >
+        <AuthContext.Provider value={{ claims, profile, isLoading, login, register, signout, refreshProfile }}>
             {children}
         </AuthContext.Provider>
     )
 }
-

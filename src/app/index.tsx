@@ -18,7 +18,7 @@ export default function LoginScreen() {
       try {
         await register(email, password)
         setIsRegister(false)
-        router.replace("/account")
+        router.replace("/getting-started")
       } catch (error: any) {
         setError(error.message)
         setIsRegister(true)

@@ -1,5 +1,5 @@
 import { useAuthContext } from '@/hooks/use-auth-context'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/services/supabase'
 import React from 'react'
 import { Button } from 'react-native'
 
