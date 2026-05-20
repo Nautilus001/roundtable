@@ -25,7 +25,7 @@ const GettingStarted = () => {
             const { data, error } = await updateProfile(profile.id, payload)
             if(data) {
                 await refreshProfile()
-                router.replace("/(app)/account")
+                router.replace("/(tabs)/account")
             }
             if (error) throw Error(error.message)
         }

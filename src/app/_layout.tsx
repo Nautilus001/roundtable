@@ -15,7 +15,7 @@ function RootNavigator() {
           <Stack.Screen name="index" options={{ headerShown: false }} />
         </Stack.Protected>
         <Stack.Protected guard={!!claims}>
-          <Stack.Screen name="(app)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="getting-started"/>
         </Stack.Protected>
         <Stack.Screen name="+not-found" />
