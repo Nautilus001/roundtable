@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-export type AuthContextType = {
+export type EventsContextType = {
   claims?: Record<string, any> | null
   profile?: any | null
   isLoading: boolean
@@ -9,7 +9,7 @@ export type AuthContextType = {
   refreshProfile: () => Promise<any>
 
 }
-export const AuthContext = createContext<AuthContextType>({
+export const AuthContext = createContext<EventsContextType>({
   claims: undefined,
   profile: undefined,
   isLoading: true,

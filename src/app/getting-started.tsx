@@ -2,7 +2,6 @@ import { StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-nati
 import React, { useState } from 'react'
 import AccountField from '@/components/account/account-field'
 import { useAuthContext } from '@/hooks/use-auth-context'
-import { supabase } from '@/services/supabase'
 import { router } from 'expo-router'
 import { updateProfile } from '@/services/profiles'
 

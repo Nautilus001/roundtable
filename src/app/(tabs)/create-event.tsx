@@ -10,5 +10,3 @@ const CreateEvent = () => {
 }
 
 export default CreateEvent
-
-const styles = StyleSheet.create({})
