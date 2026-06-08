@@ -27,9 +27,7 @@ const RootLayout = () => {
   return (
     <AuthProvider>
       <SplashScreenController/>
-        <SafeAreaView style={{flex: 1}}>
           <RootNavigator/>
-        </SafeAreaView>
       <StatusBar style="auto" />
     </AuthProvider>
   )

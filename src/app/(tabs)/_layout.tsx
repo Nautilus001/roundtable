@@ -8,7 +8,20 @@ const TabsLayout = () => {
     const { claims } = useAuthContext()
     return (
         <Tabs screenOptions={{headerShown: false}}>
-            <Tabs.Screen name="create-event"/>
+            <Tabs.Screen 
+            name="create-event"
+            options={{
+                tabBarIcon: (tabInfo) => {
+                    return (
+                        <Ionicons
+                            name="calendar"
+                            size={24}
+                            color={tabInfo.focused ? "#006600" : "#8e8e93"}
+                        />
+                    );
+                }
+            }}
+            />
             <Tabs.Protected guard={!!claims}>
                 <Tabs.Screen
                     name="dashboard"
@@ -24,7 +37,20 @@ const TabsLayout = () => {
                         }
                     }}
                 />
-                <Tabs.Screen name="account" />
+                <Tabs.Screen 
+                name="account" 
+                options={{
+                        tabBarIcon: (tabInfo) => {
+                            return (
+                                <Ionicons
+                                    name="person"
+                                    size={24}
+                                    color={tabInfo.focused ? "#006600" : "#8e8e93"}
+                                />
+                            );
+                        }
+                    }}
+                />
             </Tabs.Protected>
         </Tabs>
     )

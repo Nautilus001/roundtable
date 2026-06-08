@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Rountable",
-    "slug": "Rountable",
+    "name": "Roundtable",
+    "slug": "Roundtable",
     "scheme": "roundtable",
     "experiments": {
       "typedRoutes": true
