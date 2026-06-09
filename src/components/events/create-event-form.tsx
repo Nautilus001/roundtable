@@ -1,19 +1,19 @@
-import {Attire, EventData} from '@/models/events';
+import {Attire, CreateEventPayload, EventData} from '@/models/events';
 import {getAttireTypes} from '@/services/enums';
 import React, { useEffect, useState } from 'react';
 import { 
-StyleSheet, 
-Text, 
-TextInput, 
-TouchableOpacity, 
-View, 
-ScrollView, 
-Alert 
+    StyleSheet, 
+    Text, 
+    TextInput, 
+    TouchableOpacity, 
+    View, 
+    ScrollView, 
+    Alert 
 } from 'react-native';
 
 
 interface CreateEventFormProps {
-    onSubmit: (eventData: Omit<EventData, 'id' | 'event_code' | 'role'>) => void;
+    onSubmit: (eventData: CreateEventPayload) => void;
     isSubmitting?: boolean;
 }
 
@@ -54,7 +54,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit, isSu
             name: name.trim(),
             start_time: parsedDate,
             location: { name: locationName.trim() },
-            attire: attire,
+            attire: attire
         });
     };
 
@@ -62,7 +62,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit, isSu
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <Text style={styles.formTitle}>Create New Event</Text>
 
-            {/* Event Name */}
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Event Name</Text>
                 <TextInput
@@ -74,7 +73,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit, isSu
                 />
             </View>
 
-            {/* Start Time */}
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Start Date & Time</Text>
                 <TextInput
@@ -86,7 +84,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit, isSu
                 />
             </View>
 
-            {/* Location */}
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Location / Venue</Text>
                 <TextInput
@@ -98,7 +95,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit, isSu
                 />
             </View>
 
-            {/* Attire Selection Segment */}
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Attire Requirement</Text>
                 <View style={styles.segmentedControl}>
@@ -122,7 +118,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit, isSu
                 </View>
             </View>
 
-            {/* Submit Button */}
             <TouchableOpacity 
                 style={[styles.submitButton, isSubmitting && styles.disabledButton]} 
                 onPress={handleCreate}

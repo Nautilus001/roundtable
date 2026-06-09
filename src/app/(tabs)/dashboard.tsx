@@ -2,7 +2,6 @@ import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import { useAuthContext } from '@/hooks/use-auth-context'
 import { getEvents } from '@/services/events'
-import { supabase } from '@/services/supabase'
 import {EventData} from '@/models/events'
 import EventTile from '@/components/events/event-tile'
 

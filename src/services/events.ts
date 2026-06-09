@@ -1,13 +1,5 @@
-import {Event, EventData} from "@/models/events"
+import {CreateEventPayload, Event, EventData} from "@/models/events"
 import { supabase } from "./supabase"
-import {Alert} from "react-native"
-
-export interface EventUpdateType {
-    first_name?: string
-    last_name?: string
-    email?: string
-    username?: string
-}
 
 export async function getEvents(profile_id: any) {
     const cleanId = profile_id.trim();
@@ -41,8 +33,7 @@ export async function getEvents(profile_id: any) {
     }) as EventData[];
 }
 
-export async function createEvent(profile_id: any, payload: Event) {
-    const cleanId = profile_id.trim();
+export async function createEvent(payload: CreateEventPayload) {
     const { data, error } = await supabase
         .from('events')
         .insert([{ 
@@ -53,7 +44,8 @@ export async function createEvent(profile_id: any, payload: Event) {
         }])
         .select()
     if (error || !data) {
-        console.error('Error creating event', error);
-        return [];
+        console.error('Error creating event', error)
+        return {data: null, error}
     }
+    return {data, error: null}
 }

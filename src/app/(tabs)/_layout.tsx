@@ -7,22 +7,23 @@ import { Ionicons } from "@expo/vector-icons";
 const TabsLayout = () => {
     const { claims } = useAuthContext()
     return (
-        <Tabs screenOptions={{headerShown: false}}>
-            <Tabs.Screen 
-            name="create-event"
-            options={{
-                tabBarIcon: (tabInfo) => {
-                    return (
-                        <Ionicons
-                            name="calendar"
-                            size={24}
-                            color={tabInfo.focused ? "#006600" : "#8e8e93"}
-                        />
-                    );
-                }
-            }}
-            />
+        <Tabs screenOptions={{headerShown: false, tabBarShowLabel: false}}>
             <Tabs.Protected guard={!!claims}>
+                <Tabs.Screen 
+                    name="create-event"
+                    options={{
+                        tabBarIcon: (tabInfo) => {
+                            return (
+                                <Ionicons
+                                    name="calendar"
+                                    size={24}
+                                    color={tabInfo.focused ? "#006600" : "#8e8e93"}
+                                />
+                            );
+                        },
+                        headerShown: false
+                    }}
+                />
                 <Tabs.Screen
                     name="dashboard"
                     options={{
@@ -34,7 +35,8 @@ const TabsLayout = () => {
                                     color={tabInfo.focused ? "#006600" : "#8e8e93"}
                                 />
                             );
-                        }
+                        },
+                        headerShown: false
                     }}
                 />
                 <Tabs.Screen 
@@ -48,7 +50,8 @@ const TabsLayout = () => {
                                     color={tabInfo.focused ? "#006600" : "#8e8e93"}
                                 />
                             );
-                        }
+                        },
+                        headerShown: false
                     }}
                 />
             </Tabs.Protected>

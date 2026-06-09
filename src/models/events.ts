@@ -10,14 +10,22 @@ export interface Role {
 }
 
 export interface Event {
-    id: string
+    id?: string
     name: string
     start_time: Date
     location: any
     attire: Attire
-    event_code: string
+    event_code?: string
 }
 
 export type EventData = Event & {
     role: EventRole
+}
+
+export type CreateEventPayload = {
+    name: string,
+    start_time: Date,
+    location: any,
+    attire: Attire,
+    role?: string
 }
