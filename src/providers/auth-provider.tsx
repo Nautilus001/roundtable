@@ -9,8 +9,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [claims, setClaims] = useState<Record<string, any> | null | undefined>(null)
     const [profile, setProfile] = useState<any>(null)
     const [isLoading, setLoading] = useState<boolean>(false)
+    const [isInitialized, setIsInitialized] = useState<boolean>(false)
 
-    async function fetchUserDataAndClaims() {
+    async function fetchUserDataAndClaims(isFirstRun=false) {
         setLoading(true)
         try { 
             const data = (await getAuthSessionData()).data
@@ -33,14 +34,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             console.error("Unexpected error in fetchUserDataAndClaims:", error)
         } finally {
             setLoading(false)
+            if (isFirstRun) setIsInitialized(true)
         }
     }
 
     useEffect(() => {
-        fetchUserDataAndClaims()
+        fetchUserDataAndClaims(true)
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
-            fetchUserDataAndClaims()
+            fetchUserDataAndClaims(false)
         })
 
         return () => {
@@ -101,7 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ claims, profile, isLoading, login, register, signout, refreshProfile }}>
+        <AuthContext.Provider value={{ claims, profile, isLoading, isInitialized, login, register, signout, refreshProfile }}>
             {children}
         </AuthContext.Provider>
     )

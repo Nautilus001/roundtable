@@ -12,6 +12,8 @@ import {
     Alert, 
     ActivityIndicator
 } from 'react-native';
+import DateAndTimeInput from '../forms/date-and-time';
+
 interface CreateEventFormProps {
     onSubmit: (eventData: CreateEventPayload) => Promise<void>; 
 }
@@ -63,53 +65,24 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit}) => 
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Event Name</Text>
                 <TextInput
-                style={styles.input}
-                placeholder="e.g., Gala Dinner"
-                placeholderTextColor="#9ca3af"
-                value={name}
-                onChangeText={setName}
+                    style={styles.input}
+                    placeholder="Gala Dinner"
+                    placeholderTextColor="#9ca3af"
+                    value={name}
+                    onChangeText={setName}
                 />
             </View>
 
-            <View style={styles.dateInput}>
-            <View>
-                <Text style={styles.label}>Start Date</Text>
-                <DateTimePicker
-                    value={date}
-                    mode="date"
-                    onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
-                        if (selectedDate) {
-                            const mergedDate = new Date(date);
-                            mergedDate.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
-                            setDate(mergedDate);
-                        }
-                    }}
-                />
-            </View>
-            <View>
-                <Text style={styles.label}>Start Time</Text>
-                <DateTimePicker
-                    value={date}
-                    mode="time"
-                    onChange={(event: DateTimePickerEvent, selectedTime?: Date) => {
-                        if (selectedTime) {
-                            const mergedTime = new Date(date);
-                            mergedTime.setHours(selectedTime.getHours(), selectedTime.getMinutes());
-                            setDate(mergedTime);
-                        }
-                    }}
-                />
-            </View>
-            </View>
+            <DateAndTimeInput date={date} setDate={setDate}/>
 
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Location / Venue</Text>
                 <TextInput
-                style={styles.input}
-                placeholder="e.g., Metropolitan Hall"
-                placeholderTextColor="#9ca3af"
-                value={locationName}
-                onChangeText={setLocationName}
+                    style={styles.input}
+                    placeholder="e.g., Metropolitan Hall"
+                    placeholderTextColor="#9ca3af"
+                    value={locationName}
+                    onChangeText={setLocationName}
                 />
             </View>
 
@@ -118,19 +91,19 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit}) => 
                 <View style={styles.segmentedControl}>
                 {attireOptions.map((option) => (
                     <TouchableOpacity
-                    key={option}
-                    style={[
-                        styles.segmentButton,
-                        attire === option && styles.segmentButtonActive
-                    ]}
-                    onPress={() => setAttire(option)}
+                        key={option}
+                        style={[
+                            styles.segmentButton,
+                            attire === option && styles.segmentButtonActive
+                        ]}
+                        onPress={() => setAttire(option)}
                     >
-                    <Text style={[
-                        styles.segmentText,
-                        attire === option && styles.segmentTextActive
-                    ]}>
-                        {option}
-                    </Text>
+                        <Text style={[
+                            styles.segmentText,
+                            attire === option && styles.segmentTextActive
+                        ]}>
+                            {option}
+                        </Text>
                     </TouchableOpacity>
                 ))}
                 </View>

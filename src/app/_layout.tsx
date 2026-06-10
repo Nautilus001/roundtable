@@ -6,6 +6,9 @@ import { StatusBar } from 'expo-status-bar'
 import React, { useEffect } from 'react'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 
+SplashScreen.preventAutoHideAsync()
+
+
 function RootNavigator() {
   const { claims } = useAuthContext()
   
@@ -23,11 +26,26 @@ function RootNavigator() {
   )
 }
 
+function AppShell() {
+  //This makse sure the spalsh screen is visible while the app is loading.
+  const { isInitialized } = useAuthContext()
+
+  useEffect(() => {
+    if (isInitialized) {
+      SplashScreen.hideAsync()
+    }
+  }, [isInitialized])
+
+  return <RootNavigator/>
+}
+
 const RootLayout = () => {
+  
+
   return (
     <AuthProvider>
       <SafeAreaProvider>
-          <RootNavigator/>
+          <AppShell/>
       </SafeAreaProvider>
     </AuthProvider>
   )
