@@ -9,7 +9,6 @@ const NotFound = () => {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       
-      {/* Visual Error Message */}
       <View style={styles.textContainer}>
         <Text style={styles.errorCode}>404</Text>
         <Text style={styles.title}>Page Not Found</Text>
@@ -18,7 +17,6 @@ const NotFound = () => {
         </Text>
       </View>
 
-      {/* Single Clear Redirect Action */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity 
           style={styles.primaryButton} 

@@ -35,17 +35,17 @@ export async function getEvents(profile_id: any) {
 
 export async function createEvent(payload: CreateEventPayload) {
     const { data, error } = await supabase
-        .from('events')
-        .insert([{ 
-            name: payload.name,
-            start_time: payload.start_time,
-            location: payload.location,
-            attire: payload.attire,
-        }])
-        .select()
+        .rpc('create_event_with_owner', { 
+            p_name: payload.name,
+            p_start_time: payload.start_time,
+            p_location: payload.location,
+            p_attire: payload.attire,
+        })
     if (error || !data) {
-        console.error('Error creating event', error)
+        console.error('Error creating event via RPC', error)
         return {data: null, error}
     }
     return {data, error: null}
 }
+
+//TODO: Fix Supabase function to stop shoving whole event into id

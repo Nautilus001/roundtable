@@ -1,42 +1,68 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList, useWindowDimensions, ActivityIndicator} from 'react-native'
 import React, {useEffect, useState} from 'react'
 import { useAuthContext } from '@/hooks/use-auth-context'
 import { getEvents } from '@/services/events'
 import {EventData} from '@/models/events'
 import EventTile from '@/components/events/event-tile'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Dashboard = () => {
     const { profile } = useAuthContext()
     const [eventsList, setEventsList] = useState<EventData[]>([])
+    const [isLoading, setIsLoading]  = useState<boolean>(true)
+
+    const { width } = useWindowDimensions()
+    const availableWidth = width - 32; 
+    const numColumns = Math.max(1, Math.floor(availableWidth / 150));
 
     useEffect(() => {
         if (profile?.id) {
             fetchEvents()
         }
-    },[profile.id])
+    },[profile])
 
     async function fetchEvents() {
+        setIsLoading(true)
         try {
             const data = await getEvents(profile.id)
             setEventsList(data)
         } catch (error) {
             Alert.alert("Error", "Could not fetch events.")
             console.error(error)
+        } finally {
+            setIsLoading(false)
         }
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Dashboard</Text>
-            
-            {eventsList.length > 0 && (
-                <View style={styles.listContainer}>
-                {eventsList.map((e) => (
-                    <EventTile key={e.id} item={e} />
-                ))}
-                </View>
+            <TouchableOpacity style={styles.submitButton} onPress={fetchEvents}>
+                <Text style={styles.submitButtonText}>Refresh</Text>
+            </TouchableOpacity>
+            {isLoading ? (
+                <ActivityIndicator size="large" color="#4f46e5" />
+            ) : eventsList.length > 0 ? (
+                <FlatList
+                    key={`grid-${numColumns}`} 
+                    data={eventsList}
+                    numColumns={numColumns}
+                    contentContainerStyle={styles.listContainer}
+                    renderItem={({item}) => (
+                        <View style={{ 
+                            width: availableWidth / numColumns, 
+                            padding: 6
+                        }}>
+                            <EventTile item={item} />
+                        </View>
+                    )}
+                    keyExtractor={item => item.id ?? Math.random().toString()}
+                    showsVerticalScrollIndicator={false}
+                />
+            ) : (
+                <Text style={styles.title}>No events found.</Text>
             )}
-        </View>
+        </SafeAreaView>
     )
 }
 
@@ -71,5 +97,17 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         fontWeight: '600',
         fontSize: 16,
+    },
+    submitButton: {
+        backgroundColor: '#4f46e5',
+        padding: 16,
+        borderRadius: 8,
+        alignItems: 'center',
+        margin: 12,
+    },
+    submitButtonText: {
+        color: '#ffffff',
+        fontSize: 16,
+        fontWeight: '600',
     },
 })

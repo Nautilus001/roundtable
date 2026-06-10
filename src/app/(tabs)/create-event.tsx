@@ -5,21 +5,20 @@ import {CreateEventPayload, EventData} from '@/models/events'
 import { createEvent } from '@/services/events'
 import { useAuthContext } from '@/hooks/use-auth-context'
 import { createRoleEntry, RolePayload } from '@/services/roles'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const CreateEvent = () => {
-    const {profile} = useAuthContext();
+    const { profile } = useAuthContext();
 
     const handleSubmit = async (payload: CreateEventPayload) => {
-        const { data } = await createEvent(payload)
-        const rolePayload: any = { event_id: data, profile_id: profile?.id, role: "OWNER"}
-        await createRoleEntry(rolePayload)
+        const { error } = await createEvent(payload)
+        if (error) console.error(error.message)
     }
 
     return (
-        <View style={styles.container}>
-            <Text>CreateEvent</Text>
+        <SafeAreaView style={styles.container}>
             <CreateEventForm onSubmit={handleSubmit}/>
-        </View>
+        </SafeAreaView>
     )
 }
 

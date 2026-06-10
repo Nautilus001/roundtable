@@ -25,7 +25,7 @@ export type EventData = Event & {
 export type CreateEventPayload = {
     name: string,
     start_time: Date,
-    location: any,
+    location: string,
     attire: Attire,
     role?: string
 }

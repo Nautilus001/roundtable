@@ -1,5 +1,6 @@
 import {Attire, CreateEventPayload, EventData} from '@/models/events';
 import {getAttireTypes} from '@/services/enums';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import React, { useEffect, useState } from 'react';
 import { 
     StyleSheet, 
@@ -8,23 +9,23 @@ import {
     TouchableOpacity, 
     View, 
     ScrollView, 
-    Alert 
+    Alert, 
+    ActivityIndicator
 } from 'react-native';
-
-
 interface CreateEventFormProps {
-    onSubmit: (eventData: CreateEventPayload) => void;
-    isSubmitting?: boolean;
+    onSubmit: (eventData: CreateEventPayload) => Promise<void>; 
 }
 
-export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit, isSubmitting = false }) => {
-    const [name, setName] = useState('');
-    const [startTime, setStartTime] = useState('');
-    const [locationName, setLocationName] = useState('');
-    const [attire, setAttire] = useState<Attire>('CASUAL');
+export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit}) => {
+    const [name, setName] = useState('')
+    const [locationName, setLocationName] = useState('')
+    const [date, setDate] = useState(new Date())
+    const [attire, setAttire] = useState<Attire>('CASUAL')
     const [attireOptions, setAttireOptions] = useState<Attire[]>([])
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
     useEffect(() => {
+        
         async function fetchAttireOptions() {
             const { data, error } = await getAttireTypes()
 
@@ -35,27 +36,24 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit, isSu
             }
         }
 
-        fetchAttireOptions();
+        fetchAttireOptions()
+
     }, []);
 
-    const handleCreate = () => {
-        if (!name.trim() || !startTime.trim() || !locationName.trim()) {
-            Alert.alert('Missing Fields', 'Please fill out all fields before submitting.');
-            return;
-        }
+    const handleCreate = async () => {
 
-        const parsedDate = new Date(startTime);
-            if (isNaN(parsedDate.getTime())) {
-            Alert.alert('Invalid Date', 'Please enter a valid date format (YYYY-MM-DD HH:MM).');
-            return;
-        }
+        setIsSubmitting(true)
 
-        onSubmit({
-            name: name.trim(),
-            start_time: parsedDate,
-            location: { name: locationName.trim() },
-            attire: attire
-        });
+        try {
+            await onSubmit({
+                name: name.trim(),
+                start_time: date,
+                location: locationName.trim(),
+                attire: attire
+            })
+        } finally {
+            setIsSubmitting(false)
+        }
     };
 
     return (
@@ -73,15 +71,35 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit, isSu
                 />
             </View>
 
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Start Date & Time</Text>
-                <TextInput
-                style={styles.input}
-                placeholder="YYYY-MM-DD HH:MM (e.g., 2026-05-21 19:30)"
-                placeholderTextColor="#9ca3af"
-                value={startTime}
-                onChangeText={setStartTime}
+            <View style={styles.dateInput}>
+            <View>
+                <Text style={styles.label}>Start Date</Text>
+                <DateTimePicker
+                    value={date}
+                    mode="date"
+                    onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
+                        if (selectedDate) {
+                            const mergedDate = new Date(date);
+                            mergedDate.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+                            setDate(mergedDate);
+                        }
+                    }}
                 />
+            </View>
+            <View>
+                <Text style={styles.label}>Start Time</Text>
+                <DateTimePicker
+                    value={date}
+                    mode="time"
+                    onChange={(event: DateTimePickerEvent, selectedTime?: Date) => {
+                        if (selectedTime) {
+                            const mergedTime = new Date(date);
+                            mergedTime.setHours(selectedTime.getHours(), selectedTime.getMinutes());
+                            setDate(mergedTime);
+                        }
+                    }}
+                />
+            </View>
             </View>
 
             <View style={styles.inputGroup}>
@@ -119,13 +137,15 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit, isSu
             </View>
 
             <TouchableOpacity 
-                style={[styles.submitButton, isSubmitting && styles.disabledButton]} 
+                style={[styles.submitButton]} 
                 onPress={handleCreate}
                 disabled={isSubmitting}
             >
-                <Text style={styles.submitButtonText}>
-                {isSubmitting ? 'Creating...' : 'Create Event'}
-                </Text>
+                {isSubmitting ? <ActivityIndicator size="large" color="#4f46e5" /> :
+                    <Text style={styles.submitButtonText}>
+                        Create Event
+                    </Text>
+                }
             </TouchableOpacity>
         </ScrollView>
     );
@@ -161,6 +181,11 @@ const styles = StyleSheet.create({
         color: '#111827',
         backgroundColor: '#f9fafb',
     },
+    dateInput: {
+        flex: 1, 
+        flexDirection: "row",
+        paddingVertical: 12
+    },
     segmentedControl: {
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -193,9 +218,6 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         alignItems: 'center',
         marginTop: 12,
-    },
-    disabledButton: {
-        backgroundColor: '#9ca3af',
     },
     submitButtonText: {
         color: '#ffffff',

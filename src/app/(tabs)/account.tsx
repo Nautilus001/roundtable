@@ -7,6 +7,7 @@ import Spacer from '@/components/utility/spacer'
 import { supabase } from '@/services/supabase'
 import { router } from 'expo-router'
 import { deleteProfile, ProfileUpdateType, updateProfile } from '@/services/profiles'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { width } = Dimensions.get('window')
 
@@ -64,7 +65,7 @@ const AccountView = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View style={styles.headerContainer}>
                 <Text style={styles.welcomeLabel}>Welcome,</Text>
                 <Text style={styles.emailText}>{profile?.email ?? "Anonymous"}</Text>
@@ -138,7 +139,7 @@ const AccountView = () => {
                 
                 <SignOutButton />
             </View>
-        </View>
+        </SafeAreaView>
     )
 }
 

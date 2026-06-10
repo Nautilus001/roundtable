@@ -4,7 +4,7 @@ import { AuthProvider } from '@/providers/auth-provider'
 import { SplashScreen, Stack, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 
 function RootNavigator() {
   const { claims } = useAuthContext()
@@ -26,9 +26,9 @@ function RootNavigator() {
 const RootLayout = () => {
   return (
     <AuthProvider>
-      <SplashScreenController/>
+      <SafeAreaProvider>
           <RootNavigator/>
-      <StatusBar style="auto" />
+      </SafeAreaProvider>
     </AuthProvider>
   )
 }

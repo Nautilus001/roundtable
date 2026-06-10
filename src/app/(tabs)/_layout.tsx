@@ -10,6 +10,10 @@ const TabsLayout = () => {
         <Tabs screenOptions={{headerShown: false, tabBarShowLabel: false}}>
             <Tabs.Protected guard={!!claims}>
                 <Tabs.Screen 
+                    name="index" 
+                    options={{ href: null }} 
+                />
+                <Tabs.Screen 
                     name="create-event"
                     options={{
                         tabBarIcon: (tabInfo) => {
