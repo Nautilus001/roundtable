@@ -36,10 +36,17 @@ jobs:
           build-args: |
             EXPO_PUBLIC_SUPABASE_URL=${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
             EXPO_PUBLIC_SUPABASE_KEY=${{ secrets.EXPO_PUBLIC_SUPABASE_KEY }}
+
   deploy:
     needs: build-and-push
     runs-on: self-hosted
     environment: production
 
     steps:
-      - name:
+      - name: Pull new image
+        run: docker pull ghcr.io/nautilus001/roundtable:latest
+
+      - name: Restart container
+        run: |
+          docker compose -f ~/roundtable/docker-compose.yml pull
+          docker compose -f ~/roundtable/docker-compose.yml up -d
