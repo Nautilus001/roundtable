@@ -34,4 +34,6 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/roundtable:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/roundtable:${{github.sha}}
-            
+          build-args: |
+            EXPO_PUBLIC_SUPABASE_KEY=${{ secrets.EXPO_PUBLIC_SUPABASE_KEY }}
+            EXPO_PUBLIC_SUPABASE_URL=${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
