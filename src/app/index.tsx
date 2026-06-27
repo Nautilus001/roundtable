@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native'
-import { Link, router, useRouter } from 'expo-router'
+import React, { useState } from 'react'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
+import { useRouter } from 'expo-router'
 import { useAuthContext } from '@/hooks/use-auth-context'
 
 export default function LoginScreen() {

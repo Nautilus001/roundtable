@@ -12,7 +12,7 @@ import {
     Alert, 
     ActivityIndicator
 } from 'react-native';
-import DateAndTimeInput from '../forms/date-and-time';
+//import DateAndTimeInput from '../forms/date-and-time';
 
 interface CreateEventFormProps {
     onSubmit: (eventData: CreateEventPayload) => Promise<void>; 
@@ -73,7 +73,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit}) => 
                 />
             </View>
 
-            <DateAndTimeInput date={date} setDate={setDate}/>
+            {/* <DateAndTimeInput date={date} setDate={setDate}/> */}
 
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Location / Venue</Text>

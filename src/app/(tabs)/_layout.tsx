@@ -2,7 +2,7 @@ import { StyleSheet} from 'react-native'
 import React from 'react'
 import { Tabs } from 'expo-router'
 import { useAuthContext } from '@/hooks/use-auth-context'
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from '@react-native-vector-icons/ionicons';
 
 const TabsLayout = () => {
     const { claims } = useAuthContext()

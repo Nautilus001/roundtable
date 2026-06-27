@@ -3,12 +3,9 @@ import React from 'react'
 import {CreateEventForm} from '@/components/events/create-event-form'
 import {CreateEventPayload, EventData} from '@/models/events'
 import { createEvent } from '@/services/events'
-import { useAuthContext } from '@/hooks/use-auth-context'
-import { createRoleEntry, RolePayload } from '@/services/roles'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const CreateEvent = () => {
-    const { profile } = useAuthContext();
 
     const handleSubmit = async (payload: CreateEventPayload) => {
         const { error } = await createEvent(payload)
