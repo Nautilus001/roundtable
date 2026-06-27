@@ -1,6 +1,6 @@
 # Rountable
 
-A modern, cross-platform mobile and web application built using **Expo (React Native)** and **TypeScript**, with a cloud backend powered by **Supabase**. The production web deployment is containerized with **Docker**, reverse-proxied using **Nginx**, and securely routed through a **Cloudflare Tunnel**.
+A modern, cross-platform mobile and web application built using **Expo (React Native)** and **TypeScript**, with a cloud backend powered by **Supabase**. The production web deployment is containerized with **Docker**, reverse-proxied using **Nginx**, and securely routed through a **Cloudflare Tunnel**. It can be found at [`taste.nautilius.online`](http://taste.nautilius.online)
 
 ---
 
