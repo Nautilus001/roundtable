@@ -6,7 +6,7 @@ RUN npm install --legacy-peer-deps
 
 COPY .  .
 
-RUN npx expo export:web
+RUN npx expo export --platform web
 
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
