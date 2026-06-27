@@ -1,16 +1,8 @@
 name: Build and Package Web App
 
 on:
-  push:
-    branches: [main, master]
-    paths:
-        - 'src/**'
-        - 'package.json'
-        - 'package-lock.json'
-        - 'Dockerfile'
-        - 'nginx.conf'
-  pull_request: 
-    branches: [main, master]
+  release:
+    types: [published]
 
 jobs:
   build-and-test:
@@ -37,7 +29,7 @@ jobs:
         with:
           context: .
           push: true
-          platforms: linux/amd64, linux/arm64
+          platforms: linux/arm64
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/roundtable:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/roundtable:${{github.sha}}
