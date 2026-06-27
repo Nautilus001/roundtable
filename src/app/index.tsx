@@ -43,7 +43,7 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
 
-      <Text style={styles.title}>Welcome {isRegister ? "" : "Back"}</Text>
+      <Text style={styles.title}>TASTE</Text>
       
       <TextInput
         style={styles.input}
