@@ -2,15 +2,24 @@ import React, { useState } from 'react'
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useAuthContext } from '@/hooks/use-auth-context'
+import LogoFork from '@/components/visual/logo-fork'
+import LogoDrink from '@/components/visual/logo-drink'
+import LogoFork2 from '@/components/visual/logo-fork-2'
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null);
   const [isRegister, setIsRegister] = useState(false)
+  const [logo, setLogo] = useState(0)
   const { login, register} = useAuthContext()
+  const logos = [<LogoDrink />, <LogoFork />, <LogoFork2 />]
 
   const router = useRouter()
+
+  const handleRotate = () => {
+    setLogo((logo + 1) % logos.length)
+  }
 
   const handleSubmit = async () => {
     setError(null);
@@ -43,41 +52,47 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
 
-      <Text style={styles.title}>TASTE</Text>
+      <View style={styles.logoContainer}>
+        <TouchableOpacity onPress={handleRotate}>
+          {logos[logo]}
+        </TouchableOpacity>
+      </View>
       
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
+      <View style={styles.formContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
 
-      
+        
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>{isRegister ? "Sign Up" : "Login"}</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>{isRegister ? "Sign Up" : "Login"}</Text>
+        </TouchableOpacity>
 
-      {error &&
-      <View style={styles.buttonSecondary}>
-      <Text style= {styles.errorText}>An error has occurred: {error}</Text>
-      </View>}
+        {error &&
+        <View style={styles.buttonSecondary}>
+        <Text style= {styles.errorText}>An error has occurred: {error}</Text>
+        </View>}
 
-      
-      <TouchableOpacity style={styles.buttonSecondary} onPress={handleSwitch}>
-        <Text> {isRegister ? "Been here before?" : "New here?" } </Text>
-        <Text style={styles.buttonSecondaryText}>{isRegister ? "Login" : "Sign Up!"}</Text>
-      </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.buttonSecondary} onPress={handleSwitch}>
+          <Text> {isRegister ? "Been here before?" : "New here?" } </Text>
+          <Text style={styles.buttonSecondaryText}>{isRegister ? "Login" : "Sign Up!"}</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }
@@ -86,8 +101,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
     backgroundColor: '#fff',
+  },
+  logoContainer: {
+    padding: 20      
+  },
+  formContainer: {
+    width: '100%',
+    maxWidth: 500,
   },
   title: {
     fontSize: 28,
