@@ -5,6 +5,7 @@ import { useAuthContext } from '@/hooks/use-auth-context'
 import LogoFork from '@/components/visual/logo-fork'
 import LogoDrink from '@/components/visual/logo-drink'
 import LogoFork2 from '@/components/visual/logo-fork-2'
+import LogoNegFork from '@/components/visual/logo-fork-negative'
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
@@ -13,7 +14,7 @@ export default function LoginScreen() {
   const [isRegister, setIsRegister] = useState(false)
   const [logo, setLogo] = useState(0)
   const { login, register} = useAuthContext()
-  const logos = [<LogoDrink />, <LogoFork />, <LogoFork2 />]
+  const logos = [<LogoDrink />, <LogoFork />, <LogoFork2 />, <LogoNegFork />]
 
   const router = useRouter()
 
