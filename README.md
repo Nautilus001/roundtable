@@ -29,5 +29,5 @@ Before getting started, make sure you have the following installed:
 ## CI/CD
 
 The application features a fully automated build and deployment pipeline designed for edge hosting:
-- **Continuous Integration (GitHub Actions):** On every push, a GitHub Actions workflow utilizes Docker Buildx to cross-compile a production-ready linux/arm64 image and automatically pushes it to Docker Hub.
+- **Continuous Integration (GitHub Actions):** On every push, a GitHub Actions workflow utilizes Docker Buildx to cross-compile a production-ready linux/arm64 image and automatically pushes it to Docker Hub. Additionally, implemented caching to address re-build on non-critical changes (readme, workflow files, etc).
 - **Continuous Deployment (Watchtower):** The self-hosted Raspberry Pi 4 runs a Watchtower container that periodically polls Docker Hub for the updates. It automatically pulls the latest image, recreates the application container, and serves the statically compiled web assets without manual intervention.
