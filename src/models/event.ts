@@ -3,6 +3,7 @@ export type Attire = 'BLACK TIE' | 'CASUAL';
 
 export interface Event {
     id?: string
+    created_at?: string
     name: string
     start_time: Date
     location: any

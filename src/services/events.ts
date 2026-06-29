@@ -1,8 +1,7 @@
 import {Event} from "@/models/event"
 import { supabase } from "./supabase"
 
-export async function getEvents(profile_id: any) {
-    const cleanId = profile_id.trim();
+export async function getEvents(profile: string): Promise<Event[] | null> {
     
     const { data, error } = await supabase
         .from('roles')
@@ -18,19 +17,31 @@ export async function getEvents(profile_id: any) {
                 event_code
             )
         `)
-        .eq('profile_id', cleanId);
+        .eq('profile_id', profile);
     
-    if (error || !data) {
-        console.error('Error fetching events and roles:', error);
-        return [];
+    if (error) {
+        console.error('Supabase error fetching events:', error.message);
+        return null
     }
 
-    return data.map((record: any) => {
-        return {
-            ...record.events,
-            user_role: record.role_name
-        };
-    }) as Event[];
+    if (!data) return []
+    
+    return data
+        .filter(item=>item.events != null) 
+        .map(item=> {
+            const event = item.events as any
+
+            return {
+                id: event.id,
+                created_at: event.created_at,
+                name: event.name,
+                start_time: event.start_time,
+                location: event.location,
+                attire: event.attire,
+                event_code: event.event_code,
+                role: item.role
+            }
+        })
 }
 
 export async function createEvent(payload: Event) {
