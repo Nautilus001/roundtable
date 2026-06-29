@@ -1,4 +1,4 @@
-import {Event} from "@/models/events"
+import {Event} from "@/models/event"
 import { supabase } from "./supabase"
 
 export async function getEvents(profile_id: any) {

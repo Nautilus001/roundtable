@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import {CreateEventForm} from '@/components/events/create-event-form'
-import { Event } from '@/models/events'
+import { Event } from '@/models/event'
 import { createEvent } from '@/services/events'
 import { SafeAreaView } from 'react-native-safe-area-context'
 

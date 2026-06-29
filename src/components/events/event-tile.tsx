@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { Event } from '@/models/events'
+import { Event } from '@/models/event'
 
 interface EventTileProps {
     item: Event

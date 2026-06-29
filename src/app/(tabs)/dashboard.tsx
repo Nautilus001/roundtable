@@ -2,7 +2,7 @@ import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList, 
 import React, {useEffect, useState} from 'react'
 import { useAuthContext } from '@/hooks/use-auth-context'
 import { getEvents } from '@/services/events'
-import { Event } from '@/models/events'
+import { Event } from '@/models/event'
 import EventTile from '@/components/events/event-tile'
 import { SafeAreaView } from 'react-native-safe-area-context'
 

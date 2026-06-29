@@ -1,4 +1,4 @@
-import {Attire, Event} from '@/models/events';
+import {Attire, Event} from '@/models/event';
 import {getAttireTypes} from '@/services/enums';
 import React, { useEffect, useState } from 'react';
 import { 
