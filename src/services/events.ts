@@ -1,4 +1,4 @@
-import {CreateEventPayload, Event, EventData} from "@/models/events"
+import {Event} from "@/models/events"
 import { supabase } from "./supabase"
 
 export async function getEvents(profile_id: any) {
@@ -30,10 +30,10 @@ export async function getEvents(profile_id: any) {
             ...record.events,
             user_role: record.role_name
         };
-    }) as EventData[];
+    }) as Event[];
 }
 
-export async function createEvent(payload: CreateEventPayload) {
+export async function createEvent(payload: Event) {
     const { data, error } = await supabase
         .rpc('create_event_with_owner', { 
             p_name: payload.name,

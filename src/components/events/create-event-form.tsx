@@ -1,6 +1,5 @@
-import {Attire, CreateEventPayload, EventData} from '@/models/events';
+import {Attire, Event} from '@/models/events';
 import {getAttireTypes} from '@/services/enums';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import React, { useEffect, useState } from 'react';
 import { 
     StyleSheet, 
@@ -15,7 +14,7 @@ import {
 //import DateAndTimeInput from '../forms/date-and-time';
 
 interface CreateEventFormProps {
-    onSubmit: (eventData: CreateEventPayload) => Promise<void>; 
+    onSubmit: (eventData: Event) => Promise<void>; 
 }
 
 export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit}) => {

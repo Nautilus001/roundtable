@@ -2,13 +2,13 @@ import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList, 
 import React, {useEffect, useState} from 'react'
 import { useAuthContext } from '@/hooks/use-auth-context'
 import { getEvents } from '@/services/events'
-import {EventData} from '@/models/events'
+import { Event } from '@/models/events'
 import EventTile from '@/components/events/event-tile'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Dashboard = () => {
     const { profile } = useAuthContext()
-    const [eventsList, setEventsList] = useState<EventData[]>([])
+    const [eventsList, setEventsList] = useState< Event[]>([])
     const [isLoading, setIsLoading]  = useState<boolean>(true)
 
     const { width } = useWindowDimensions()

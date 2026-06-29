@@ -5,17 +5,22 @@ import { fetchProfile } from '@/services/profiles'
 import { getAuthSessionData, signInWithEmail, signUpWithEmail, signOutUser } from '@/services/auth'
 import { Alert } from 'react-native'
 import { EventContext } from '@/contexts/events-context'
+import { useAuthContext } from '@/hooks/use-auth-context'
+import { getEvents } from '@/services/events'
 
 export const EventProvider = ({ children }: { children: React.ReactNode }) => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const { profile } = useAuthContext()
 
-    const getEvents = async () => {
+    const fetchEvents = async () => {
         setIsLoading(true)
         try {
-
-        } catch {
-
+            if(!profile) throw new Error("No profile detected")
+                
+            const data = await getEvents(profile)
+        } catch (error: any) {
+            console.error("Unexpected error in fetchEvents:", error)
         } finally {
             setIsLoading(false)
         }
@@ -33,7 +38,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     return (
-        <EventContext.Provider value={{isLoading, getEvents, createEvent}}>
+        <EventContext.Provider value={{isLoading, fetchEvents, createEvent}}>
             {children}
         </EventContext.Provider>
     )

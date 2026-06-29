@@ -16,16 +16,5 @@ export interface Event {
     location: any
     attire: Attire
     event_code?: string
-}
-
-export type EventData = Event & {
-    role: EventRole
-}
-
-export type CreateEventPayload = {
-    name: string,
-    start_time: Date,
-    location: string,
-    attire: Attire,
-    role?: string
+    role?: EventRole
 }

@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import {CreateEventForm} from '@/components/events/create-event-form'
-import {CreateEventPayload, EventData} from '@/models/events'
+import { Event } from '@/models/events'
 import { createEvent } from '@/services/events'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const CreateEvent = () => {
 
-    const handleSubmit = async (payload: CreateEventPayload) => {
+    const handleSubmit = async (payload: Event) => {
         const { error } = await createEvent(payload)
         if (error) console.error(error.message)
     }

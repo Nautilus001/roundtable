@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { EventData } from '@/models/events'
+import { Event } from '@/models/events'
 
 interface EventTileProps {
-    item: EventData
+    item: Event
 }
 
 export const EventTile: React.FC<EventTileProps> = ({item}) => {  
