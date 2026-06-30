@@ -1,5 +1,5 @@
-export type EventRole = 'OWNER' | 'JUDGE' | 'VOTER';
-export type Attire = 'BLACK TIE' | 'CASUAL';
+export type EventRole = 'OWNER' | 'JUDGE' | 'VOTER'
+export type Attire = 'BLACK TIE' | 'CASUAL'
 
 export interface Gathering {
     id?: string

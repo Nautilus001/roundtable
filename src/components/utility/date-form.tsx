@@ -1,38 +1,38 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native';
+import React, { useState } from 'react'
+import { StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native'
 import DatePicker from '@/components/utility/date-picker'
 
 interface DateFormProps {
-    date: Date;
-    onChange: (newDate: Date) => void;
-    label?: string;
+    date: Date
+    onChange: (newDate: Date) => void
+    label?: string
 }
 
 export const DateForm: React.FC<DateFormProps> = ({ date, onChange, label = "Date & Time" }) => {
-    const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-    const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
+    const [showDatePicker, setShowDatePicker] = useState<boolean>(false)
+    const [showTimePicker, setShowTimePicker] = useState<boolean>(false)
 
     const onDateChange = (event: any, selectedDate?: Date) => {
         if (Platform.OS === 'android') {
-            setShowDatePicker(false);
+            setShowDatePicker(false)
         }
         if (selectedDate) {
-            const newDate = new Date(date);
-            newDate.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
-            onChange(newDate);
+            const newDate = new Date(date)
+            newDate.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
+            onChange(newDate)
         }
-    };
+    }
 
     const onTimeChange = (event: any, selectedTime?: Date) => {
         if (Platform.OS === 'android') {
-            setShowTimePicker(false);
+            setShowTimePicker(false)
         }
         if (selectedTime) {
-            const newDate = new Date(date);
-            newDate.setHours(selectedTime.getHours(), selectedTime.getMinutes());
-            onChange(newDate);
+            const newDate = new Date(date)
+            newDate.setHours(selectedTime.getHours(), selectedTime.getMinutes())
+            onChange(newDate)
         }
-    };
+    }
 
     return (
         <View style={styles.inputGroup}>
@@ -67,8 +67,8 @@ export const DateForm: React.FC<DateFormProps> = ({ date, onChange, label = "Dat
                 </View>
             )}
         </View>
-    );
-};
+    )
+}
 
 const styles = StyleSheet.create({
     inputGroup: {
@@ -109,4 +109,4 @@ const styles = StyleSheet.create({
         color: '#111827',
         fontWeight: '500',
     },
-});
+})

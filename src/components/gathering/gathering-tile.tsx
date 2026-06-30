@@ -36,7 +36,7 @@ export const GatheringTile: React.FC<GatheringTileProps> = ({item}) => {
             </Text>
             </View>
         </View>
-    );
+    )
 }
 
 export default GatheringTile
@@ -97,4 +97,4 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
   },
-});
+})

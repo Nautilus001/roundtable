@@ -10,7 +10,7 @@ import LogoNegFork from '@/components/visual/logo-fork-negative'
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null)
   const [isRegister, setIsRegister] = useState(false)
   const [logo, setLogo] = useState(0)
   const { login, register} = useAuthContext()
@@ -23,7 +23,7 @@ export default function LoginScreen() {
   }
 
   const handleSubmit = async () => {
-    setError(null);
+    setError(null)
     if(isRegister){
       try {
         await register(email, password)

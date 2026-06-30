@@ -1,44 +1,46 @@
-import { createElement } from 'react';
+import { createElement } from 'react'
 
 interface PickerProps {
-    value: Date;
-    mode: 'date' | 'time';
-    onChange: (event: any, date?: Date) => void;
+    value: Date | string
+    mode: 'date' | 'time'
+    onChange: (event: any, date?: Date) => void
 }
 
 export default function DatePicker({ value, mode, onChange }: PickerProps) {
 
+    const dateObject = typeof value === 'string' ? new Date(value) : value
+
     const getFormattedValue = () => {
-        if (!value || isNaN(value.getTime())) return '';
+        if (!dateObject || isNaN(dateObject.getTime())) return ''
         
         if (mode === 'date') {
-            const year = value.getFullYear();
-            const month = String(value.getMonth() + 1).padStart(2, '0');
-            const day = String(value.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
+            const year = dateObject.getFullYear()
+            const month = String(dateObject.getMonth() + 1).padStart(2, '0')
+            const day = String(dateObject.getDate()).padStart(2, '0')
+            return `${year}-${month}-${day}`
         } else {
-            const hours = String(value.getHours()).padStart(2, '0');
-            const minutes = String(value.getMinutes()).padStart(2, '0');
-            return `${hours}:${minutes}`;
+            const hours = String(dateObject.getHours()).padStart(2, '0')
+            const minutes = String(dateObject.getMinutes()).padStart(2, '0')
+            return `${hours}:${minutes}`
         }
-    };
+    }
 
     const handleWebChange = (event: any) => {
-        const val = event.target.value;
-        if (!val) return; 
+        const val = event.target.value
+        if (!val) return 
         
-        const updatedDate = new Date(value);
+        const updatedDate = new Date(dateObject || Date.now())
 
         if (mode === 'date') {
-            const [year, month, day] = val.split('-').map(Number);
-            updatedDate.setFullYear(year, month - 1, day);
+            const [year, month, day] = val.split('-').map(Number)
+            updatedDate.setFullYear(year, month - 1, day)
         } else {
-            const [hours, minutes] = val.split(':').map(Number);
-            updatedDate.setHours(hours, minutes);
+            const [hours, minutes] = val.split(':').map(Number)
+            updatedDate.setHours(hours, minutes)
         }
         
-        onChange(event, updatedDate);
-    };
+        onChange(event, updatedDate)
+    }
 
     return createElement('input', {
         type: mode,
@@ -46,7 +48,7 @@ export default function DatePicker({ value, mode, onChange }: PickerProps) {
         onChange: handleWebChange,
         onClick: (e: any) => {
             if (typeof e.target.showPicker === 'function') {
-                e.target.showPicker();
+                e.target.showPicker()
             }
         },
         style: {
@@ -63,5 +65,5 @@ export default function DatePicker({ value, mode, onChange }: PickerProps) {
         boxSizing: 'border-box',
         cursor: 'pointer',
         },
-    });
+    })
 }

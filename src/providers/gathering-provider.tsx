@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { GatheringContext } from '@/contexts/gathering-context'
 import { useAuthContext } from '@/hooks/use-auth-context'
-import { getGatherings, postGathering } from '@/services/gathering'
+import { getGatherings, postGathering, putGathering } from '@/services/gathering'
 import { Gathering } from '@/models/gathering'
 
 export const GatheringProvider = ({ children }: { children: React.ReactNode }) => {
@@ -16,10 +16,10 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         setIsLoading(true)
         try { 
             if(profile) {
-                const data = (await getGatherings(profile.id))
+                const { data, error } = (await getGatherings(profile.id))
+                if (error || !data) throw Error()
                 if (data) setGatherings(data)
-                if (!data) throw Error()
-                }
+            }
         } catch (error: any) {
             console.error("Unexpected error in fetchGatherings:", error)
         } finally {
@@ -42,6 +42,21 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         try {
             const {data, error} = await postGathering(payload)
             if (error || !data) throw Error()
+            setActive(data[0].id ?? "")
+        } catch (error: any) {
+            console.error("Error on createGathering: ", error)
+        } finally {
+            fetchGatherings()
+            setIsLoading(false)
+        }
+    }
+
+    const updateGathering = async (payload: Gathering) => {
+        setIsLoading(true)
+        try {
+            const {data, error} = await putGathering(payload)
+            if (error || !data) throw Error()
+            setActive(data[0].id ?? "")
         } catch (error: any) {
             console.error("Error on createGathering: ", error)
         } finally {
@@ -51,7 +66,7 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
     }
 
     return (
-        <GatheringContext.Provider value={{isLoading, gatherings, activeGathering, setActive, fetchGatherings, createGathering}}>
+        <GatheringContext.Provider value={{isLoading, gatherings, activeGathering, setActive, fetchGatherings, createGathering, updateGathering}}>
             {children}
         </GatheringContext.Provider>
     )

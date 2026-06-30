@@ -1,26 +1,27 @@
-import {Attire, Gathering} from '@/models/gathering';
-import {getAttireTypes} from '@/services/enums';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, ActivityIndicator, Button} from 'react-native';
-import DatePicker from '../utility/date-picker';
-import { DateForm } from '../utility/date-form';
-import { useGatheringContext } from '@/hooks/use-gathering-context';
-import { router } from 'expo-router';
+import {Attire, Gathering} from '@/models/gathering'
+import {getAttireTypes} from '@/services/enums'
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, ActivityIndicator, Button} from 'react-native'
+import DatePicker from '../utility/date-picker'
+import { DateForm } from '../utility/date-form'
+import { useGatheringContext } from '@/hooks/use-gathering-context'
+import { router } from 'expo-router'
 
 interface GatheringFormProps {
+    initialData? : Gathering
     onSubmit: (eventData: Gathering) => Promise<void>
     isEdit: boolean
 }
 
-export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit }) => {
-    const [name, setName] = useState('')
-    const [locationName, setLocationName] = useState('')
-    const [date, setDate] = useState(new Date())
-    const [attire, setAttire] = useState<Attire>('CASUAL')
+export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, initialData }) => {
+    const [name, setName] = useState(initialData?.name ?? "")
+    const [locationName, setLocationName] = useState(initialData?.location ?? "")
+    const [date, setDate] = useState(initialData?.start_time ?? new Date())
+    const [attire, setAttire] = useState<Attire>(initialData?.attire ?? 'CASUAL')
     const [attireOptions, setAttireOptions] = useState<Attire[]>([])
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
-    const {activeGathering, setActive} = useGatheringContext()
+    const {setActive} = useGatheringContext()
 
     useEffect(() => {
         
@@ -28,15 +29,15 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit }
             const { data, error } = await getAttireTypes()
 
             if (data) {
-                setAttireOptions(data.map((item: { value: string }) => item.value as Attire));
+                setAttireOptions(data.map((item: { value: string }) => item.value as Attire))
             } else if (error) {
-                console.error('Error fetching attire options:', error);
+                console.error('Error fetching attire options:', error)
             }
         }
 
         fetchAttireOptions()
 
-    }, []);
+    }, [])
 
     const handleSubmit = async () => {
 
@@ -54,7 +55,7 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit }
             setIsSubmitting(false)
             router.push("/dashboard")
         }
-    };
+    }
 
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -121,8 +122,8 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit }
                 }
             </TouchableOpacity>
         </ScrollView>
-    );
-};
+    )
+}
 
 const styles = StyleSheet.create({
     scrollContainer: {
@@ -197,4 +198,4 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
     },
-});
+})

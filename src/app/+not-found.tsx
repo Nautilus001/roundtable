@@ -1,9 +1,9 @@
-import { StyleSheet, Text, TouchableOpacity, View, StatusBar } from 'react-native';
-import React from 'react';
-import { useRouter } from 'expo-router';
+import { StyleSheet, Text, TouchableOpacity, View, StatusBar } from 'react-native'
+import React from 'react'
+import { useRouter } from 'expo-router'
 
 const NotFound = () => {
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <View style={styles.container}>
@@ -27,10 +27,10 @@ const NotFound = () => {
         </TouchableOpacity>
       </View>
     </View>
-  );
-};
+  )
+}
 
-export default NotFound;
+export default NotFound
 
 const styles = StyleSheet.create({
   container: {
@@ -85,4 +85,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-});
+})
