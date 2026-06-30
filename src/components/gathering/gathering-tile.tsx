@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { EventData } from '@/models/events'
+import { Gathering } from '@/models/gathering'
 
-interface EventTileProps {
-    item: EventData
+interface GatheringTileProps {
+    item: Gathering
 }
 
-export const EventTile: React.FC<EventTileProps> = ({item}) => {  
+export const GatheringTile: React.FC<GatheringTileProps> = ({item}) => {  
 
     const formattedDate = new Date(item.start_time).toLocaleString([], {
         month: 'short',
@@ -36,10 +36,10 @@ export const EventTile: React.FC<EventTileProps> = ({item}) => {
             </Text>
             </View>
         </View>
-    );
+    )
 }
 
-export default EventTile
+export default GatheringTile
 
 const styles = StyleSheet.create({
   eventTile: {
@@ -97,4 +97,4 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
   },
-});
+})

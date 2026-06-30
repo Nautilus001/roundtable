@@ -1,6 +1,7 @@
 import { SplashScreenController } from '@/components/splash-screen-controller'
 import { useAuthContext } from '@/hooks/use-auth-context'
 import { AuthProvider } from '@/providers/auth-provider'
+import { GatheringProvider } from '@/providers/gathering-provider'
 import { SplashScreen, Stack, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect } from 'react'
@@ -27,7 +28,6 @@ function RootNavigator() {
 }
 
 function AppShell() {
-  //This makse sure the spalsh screen is visible while the app is loading.
   const { isInitialized } = useAuthContext()
 
   useEffect(() => {
@@ -40,13 +40,13 @@ function AppShell() {
 }
 
 const RootLayout = () => {
-  
-
   return (
     <AuthProvider>
-      <SafeAreaProvider>
-          <AppShell/>
-      </SafeAreaProvider>
+      <GatheringProvider>
+        <SafeAreaProvider>
+            <AppShell/>
+        </SafeAreaProvider>
+      </GatheringProvider>
     </AuthProvider>
   )
 }

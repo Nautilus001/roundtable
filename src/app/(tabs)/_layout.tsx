@@ -2,19 +2,18 @@ import { StyleSheet} from 'react-native'
 import React from 'react'
 import { Tabs } from 'expo-router'
 import { useAuthContext } from '@/hooks/use-auth-context'
-import Ionicons from '@react-native-vector-icons/ionicons';
+import Ionicons from '@react-native-vector-icons/ionicons'
 
 const TabsLayout = () => {
     const { claims } = useAuthContext()
     return (
-        <Tabs screenOptions={{headerShown: false, tabBarShowLabel: false}}>
+        <Tabs 
+            initialRouteName='(dashboard)'
+            screenOptions={{headerShown: false, tabBarShowLabel: false}}
+        >
             <Tabs.Protected guard={!!claims}>
                 <Tabs.Screen 
-                    name="index" 
-                    options={{ href: null }} 
-                />
-                <Tabs.Screen 
-                    name="create-event"
+                    name="create-gathering"
                     options={{
                         tabBarIcon: (tabInfo) => {
                             return (
@@ -23,13 +22,13 @@ const TabsLayout = () => {
                                     size={24}
                                     color={tabInfo.focused ? "#006600" : "#8e8e93"}
                                 />
-                            );
+                            )
                         },
                         headerShown: false
                     }}
                 />
                 <Tabs.Screen
-                    name="dashboard"
+                    name="(dashboard)"
                     options={{
                         tabBarIcon: (tabInfo) => {
                             return (
@@ -38,7 +37,7 @@ const TabsLayout = () => {
                                     size={24}
                                     color={tabInfo.focused ? "#006600" : "#8e8e93"}
                                 />
-                            );
+                            )
                         },
                         headerShown: false
                     }}
@@ -53,7 +52,7 @@ const TabsLayout = () => {
                                     size={24}
                                     color={tabInfo.focused ? "#006600" : "#8e8e93"}
                                 />
-                            );
+                            )
                         },
                         headerShown: false
                     }}

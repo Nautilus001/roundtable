@@ -1,60 +1,62 @@
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList, useWindowDimensions, ActivityIndicator} from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View, FlatList, useWindowDimensions, ActivityIndicator} from 'react-native'
 import React, {useEffect, useState} from 'react'
 import { useAuthContext } from '@/hooks/use-auth-context'
-import { getEvents } from '@/services/events'
-import {EventData} from '@/models/events'
-import EventTile from '@/components/events/event-tile'
+import GatheringTile from '@/components/gathering/gathering-tile'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useGatheringContext } from '@/hooks/use-gathering-context'
+import {router} from 'expo-router'
 
 const Dashboard = () => {
     const { profile } = useAuthContext()
-    const [eventsList, setEventsList] = useState<EventData[]>([])
+    const { gatherings, fetchGatherings, setActive } = useGatheringContext()
     const [isLoading, setIsLoading]  = useState<boolean>(true)
 
     const { width } = useWindowDimensions()
-    const availableWidth = width - 32; 
-    const numColumns = Math.max(1, Math.floor(availableWidth / 150));
+    const availableWidth = width - 32 
+    const numColumns = Math.max(1, Math.floor(availableWidth / 150))
 
-    useEffect(() => {
-        if (profile?.id) {
-            fetchEvents()
-        }
-    },[profile])
-
-    async function fetchEvents() {
-        setIsLoading(true)
-        try {
-            const data = await getEvents(profile.id)
-            setEventsList(data)
-        } catch (error) {
-            Alert.alert("Error", "Could not fetch events.")
-            console.error(error)
-        } finally {
+    const loadData = async () => {
+        if(profile?.id) {
+            setIsLoading(true)
+            await fetchGatherings()
             setIsLoading(false)
         }
     }
 
+    useEffect(() => {
+        loadData()
+    },[profile])
+
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Dashboard</Text>
-            <TouchableOpacity style={styles.submitButton} onPress={fetchEvents}>
+            <TouchableOpacity style={styles.submitButton} onPress={() => loadData()}>
                 <Text style={styles.submitButtonText}>Refresh</Text>
             </TouchableOpacity>
-            {isLoading ? (
+            {(isLoading) ? (
                 <ActivityIndicator size="large" color="#4f46e5" />
-            ) : eventsList.length > 0 ? (
+            ) : (gatherings && gatherings.length > 0) ? (
                 <FlatList
                     key={`grid-${numColumns}`} 
-                    data={eventsList}
+                    data={gatherings}
                     numColumns={numColumns}
                     contentContainerStyle={styles.listContainer}
                     renderItem={({item}) => (
-                        <View style={{ 
-                            width: availableWidth / numColumns, 
-                            padding: 6
+                        <TouchableOpacity onPress={() => {
+                            setActive(item.id ?? "")
+                            console.log(item)
+                            router.push({
+                                pathname: '/(tabs)/(dashboard)/[id]',
+                                params: { id: item.id ?? "" }
+                            })
                         }}>
-                            <EventTile item={item} />
-                        </View>
+                            <View style={{ 
+                                width: availableWidth / numColumns, 
+                                padding: 6
+                            }}>
+                                <GatheringTile item={item} />
+                            </View>
+                        </TouchableOpacity>
                     )}
                     keyExtractor={item => item.id ?? Math.random().toString()}
                     showsVerticalScrollIndicator={false}

@@ -1,30 +1,28 @@
-import {Attire, CreateEventPayload, EventData} from '@/models/events';
-import {getAttireTypes} from '@/services/enums';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import React, { useEffect, useState } from 'react';
-import { 
-    StyleSheet, 
-    Text, 
-    TextInput, 
-    TouchableOpacity, 
-    View, 
-    ScrollView, 
-    Alert, 
-    ActivityIndicator
-} from 'react-native';
-//import DateAndTimeInput from '../forms/date-and-time';
+import {Attire, Gathering} from '@/models/gathering'
+import {getAttireTypes} from '@/services/enums'
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, ActivityIndicator, Button} from 'react-native'
+import DatePicker from '../utility/date-picker'
+import { DateForm } from '../utility/date-form'
+import { useGatheringContext } from '@/hooks/use-gathering-context'
+import { router } from 'expo-router'
 
-interface CreateEventFormProps {
-    onSubmit: (eventData: CreateEventPayload) => Promise<void>; 
+interface GatheringFormProps {
+    initialData? : Gathering
+    onSubmit: (payload: Gathering) => Promise<void>
+    isEdit: boolean
+    isNew?: boolean
 }
 
-export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit}) => {
-    const [name, setName] = useState('')
-    const [locationName, setLocationName] = useState('')
-    const [date, setDate] = useState(new Date())
-    const [attire, setAttire] = useState<Attire>('CASUAL')
+export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, initialData, isNew=true }) => {
+    const [name, setName] = useState(initialData?.name ?? "")
+    const [locationName, setLocationName] = useState(initialData?.location ?? "")
+    const [date, setDate] = useState(initialData?.start_time ?? new Date())
+    const [attire, setAttire] = useState<Attire>(initialData?.attire ?? 'CASUAL')
     const [attireOptions, setAttireOptions] = useState<Attire[]>([])
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+
+    const {activeGathering, setActive, removeGathering} = useGatheringContext()
 
     useEffect(() => {
         
@@ -32,22 +30,23 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit}) => 
             const { data, error } = await getAttireTypes()
 
             if (data) {
-                setAttireOptions(data.map((item: { value: string }) => item.value as Attire));
+                setAttireOptions(data.map((item: { value: string }) => item.value as Attire))
             } else if (error) {
-                console.error('Error fetching attire options:', error);
+                console.error('Error fetching attire options:', error)
             }
         }
 
         fetchAttireOptions()
 
-    }, []);
+    }, [])
 
-    const handleCreate = async () => {
+    const handleSubmit = async () => {
 
         setIsSubmitting(true)
 
         try {
             await onSubmit({
+                id: activeGathering?.id ?? "",
                 name: name.trim(),
                 start_time: date,
                 location: locationName.trim(),
@@ -55,15 +54,29 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit}) => 
             })
         } finally {
             setIsSubmitting(false)
+            router.push("/dashboard")
         }
-    };
+    }
+
+    const handleDelete = async () => {
+
+        setIsSubmitting(true)
+
+        try {
+            if(activeGathering) await removeGathering(activeGathering)
+        } catch (error: any) {
+            console.error("Error deleting the gathering")
+        } finally {
+            setIsSubmitting(false)
+            router.push("/dashboard")
+        }
+    }
 
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Text style={styles.formTitle}>Create New Event</Text>
 
             <View style={styles.inputGroup}>
-                <Text style={styles.label}>Event Name</Text>
+                <Text style={styles.label}>Gathering Name</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Gala Dinner"
@@ -72,8 +85,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit}) => 
                     onChangeText={setName}
                 />
             </View>
-
-            {/* <DateAndTimeInput date={date} setDate={setDate}/> */}
 
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Location / Venue</Text>
@@ -84,6 +95,10 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit}) => 
                     value={locationName}
                     onChangeText={setLocationName}
                 />
+            </View>
+
+            <View>
+                <DateForm date={date} onChange={setDate} />
             </View>
 
             <View style={styles.inputGroup}>
@@ -111,23 +126,39 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSubmit}) => 
 
             <TouchableOpacity 
                 style={[styles.submitButton]} 
-                onPress={handleCreate}
+                onPress={handleSubmit}
                 disabled={isSubmitting}
             >
                 {isSubmitting ? <ActivityIndicator size="large" color="#4f46e5" /> :
                     <Text style={styles.submitButtonText}>
-                        Create Event
+                        {isNew ? "Create" : "Update"} Gathering
                     </Text>
                 }
             </TouchableOpacity>
+
+            {!isNew &&
+                <TouchableOpacity 
+                    style={[styles.deleteButton]} 
+                    onPress={handleDelete}
+                    disabled={isSubmitting}
+                >
+                    {isSubmitting ? <ActivityIndicator size="large" color="#4f46e5" /> :
+                        <Text style={styles.deleteButtonText}>
+                            Delete Gathering
+                        </Text>
+                    }
+                </TouchableOpacity>
+            }
         </ScrollView>
-    );
-};
+    )
+}
 
 const styles = StyleSheet.create({
     scrollContainer: {
         padding: 24,
         backgroundColor: '#ffffff',
+        width: '100%',
+        maxWidth: 750,
     },
     formTitle: {
         fontSize: 24,
@@ -197,4 +228,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
     },
-});
+    deleteButton: {
+        backgroundColor: '#ff0000',
+        paddingVertical: 12,
+        borderRadius: 6,
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    deleteButtonText: {
+        color: '#ffffff',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+})
