@@ -32,13 +32,23 @@ The application features a fully automated build and deployment pipeline designe
 ---
 ## Run Locally
 
+0. Create supabase project (out of the scope of this repo) and note the URL token and Publishable Key tokens.
+
 1. Clone the repository
    `git clone https://github.com/Nautilus001/roundtable.git [DIR NAME]`
+   
+2. Create .env in project root, and add Supabase tokens.
+   ```
+   roundtable/.env
+   
+   EXPO_PUBLIC_SUPABASE_URL=[YOUR URL TOKEN]
+   EXPO_PUBLIC_SUPABASE_KEY=[YOUR PUB KEY TOKEN]
+   ```
 
-2. Install packages - this step is vital to ensure dependency issues do not arise.
+3. Install packages - this step is vital to ensure dependency issues do not arise.
    `npm install`
 
-3. Start up the app
+4. Start up the app
    `npx expo start`
 
 **As a note:** If you are developing on your own, it is always better to try `npx expo install [package-name]` because expo will pick a compatible package. Running `npm install [package-name]` will usually just grab the latest, regardless of dependency mismatches. And that sucks to figure out.
