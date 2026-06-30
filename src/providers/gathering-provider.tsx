@@ -8,6 +8,8 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [gatherings, setGatherings] = useState<Gathering[]>([])
+    const [activeGathering, setActiveGathering] = useState<Gathering | null>(null)
+
     const { profile } = useAuthContext()
 
     async function fetchGatherings() {
@@ -29,6 +31,12 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         fetchGatherings()
     }, [])
 
+    const setActive = (gathering_id: string) => {
+        setActiveGathering(
+            gatherings.find(item => item.id === gathering_id) ?? null
+        )
+    }
+
     const createGathering = async () => {
         setIsLoading(true)
         try {
@@ -41,7 +49,7 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
     }
 
     return (
-        <GatheringContext.Provider value={{isLoading, gatherings, fetchGatherings, createGathering}}>
+        <GatheringContext.Provider value={{isLoading, gatherings, activeGathering, setActive, fetchGatherings, createGathering}}>
             {children}
         </GatheringContext.Provider>
     )

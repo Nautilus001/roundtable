@@ -7,7 +7,7 @@ import { useGatheringContext } from '@/hooks/use-gathering-context'
 
 const Dashboard = () => {
     const { profile } = useAuthContext()
-    const { gatherings, fetchGatherings } = useGatheringContext()
+    const { gatherings, fetchGatherings, setActive } = useGatheringContext()
     const [isLoading, setIsLoading]  = useState<boolean>(true)
 
     const { width } = useWindowDimensions()
@@ -41,12 +41,16 @@ const Dashboard = () => {
                     numColumns={numColumns}
                     contentContainerStyle={styles.listContainer}
                     renderItem={({item}) => (
-                        <View style={{ 
-                            width: availableWidth / numColumns, 
-                            padding: 6
+                        <TouchableOpacity onPress={() => {
+                            setActive(item.id ?? "")
                         }}>
-                            <GatheringTile item={item} />
-                        </View>
+                            <View style={{ 
+                                width: availableWidth / numColumns, 
+                                padding: 6
+                            }}>
+                                <GatheringTile item={item} />
+                            </View>
+                        </TouchableOpacity>
                     )}
                     keyExtractor={item => item.id ?? Math.random().toString()}
                     showsVerticalScrollIndicator={false}
