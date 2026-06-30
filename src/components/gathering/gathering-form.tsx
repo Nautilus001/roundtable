@@ -1,22 +1,16 @@
 import {Attire, Gathering} from '@/models/gathering';
 import {getAttireTypes} from '@/services/enums';
 import React, { useEffect, useState } from 'react';
-import { 
-    StyleSheet, 
-    Text, 
-    TextInput, 
-    TouchableOpacity, 
-    View, 
-    ScrollView, 
-    ActivityIndicator
-} from 'react-native';
-//import DateAndTimeInput from '../forms/date-and-time';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, ActivityIndicator, Button} from 'react-native';
+import DatePicker from '../utility/date-picker';
+import { DateForm } from '../utility/date-form';
 
-interface CreateGatheringFormProps {
-    onSubmit: (eventData: Gathering) => Promise<void>; 
+interface GatheringFormProps {
+    onSubmit: (eventData: Gathering) => Promise<void>
+    isEdit: boolean
 }
 
-export const CreateGatheringForm: React.FC<CreateGatheringFormProps> = ({ onSubmit}) => {
+export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit }) => {
     const [name, setName] = useState('')
     const [locationName, setLocationName] = useState('')
     const [date, setDate] = useState(new Date())
@@ -71,8 +65,6 @@ export const CreateGatheringForm: React.FC<CreateGatheringFormProps> = ({ onSubm
                 />
             </View>
 
-            {/* <DateAndTimeInput date={date} setDate={setDate}/> */}
-
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Location / Venue</Text>
                 <TextInput
@@ -82,6 +74,10 @@ export const CreateGatheringForm: React.FC<CreateGatheringFormProps> = ({ onSubm
                     value={locationName}
                     onChangeText={setLocationName}
                 />
+            </View>
+
+            <View>
+                <DateForm date={date} onChange={setDate} />
             </View>
 
             <View style={styles.inputGroup}>

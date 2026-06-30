@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import {CreateGatheringForm} from '@/components/gathering/create-gathering-form'
+import {GatheringForm} from '@/components/gathering/gathering-form'
 import { Gathering } from '@/models/gathering'
 import { createEvent } from '@/services/gathering'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -14,7 +14,7 @@ const CreateGathering = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <CreateGatheringForm onSubmit={handleSubmit}/>
+            <GatheringForm onSubmit={handleSubmit} isEdit={true}/>
         </SafeAreaView>
     )
 }
