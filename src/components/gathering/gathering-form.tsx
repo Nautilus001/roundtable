@@ -9,7 +9,7 @@ import { router } from 'expo-router'
 
 interface GatheringFormProps {
     initialData? : Gathering
-    onSubmit: (eventData: Gathering) => Promise<void>
+    onSubmit: (payload: Gathering) => Promise<void>
     isEdit: boolean
     isNew?: boolean
 }
@@ -53,7 +53,6 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, 
                 attire: attire
             })
         } finally {
-            setActive("")
             setIsSubmitting(false)
             router.push("/dashboard")
         }
@@ -68,7 +67,6 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, 
         } catch (error: any) {
             console.error("Error deleting the gathering")
         } finally {
-            setActive("")
             setIsSubmitting(false)
             router.push("/dashboard")
         }
@@ -76,7 +74,6 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, 
 
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Text style={styles.formTitle}>Create New Gathering</Text>
 
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Gathering Name</Text>
@@ -141,12 +138,12 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, 
 
             {!isNew &&
                 <TouchableOpacity 
-                    style={[styles.submitButton]} 
+                    style={[styles.deleteButton]} 
                     onPress={handleDelete}
                     disabled={isSubmitting}
                 >
                     {isSubmitting ? <ActivityIndicator size="large" color="#4f46e5" /> :
-                        <Text style={styles.submitButtonText}>
+                        <Text style={styles.deleteButtonText}>
                             Delete Gathering
                         </Text>
                     }
@@ -160,6 +157,8 @@ const styles = StyleSheet.create({
     scrollContainer: {
         padding: 24,
         backgroundColor: '#ffffff',
+        width: '100%',
+        maxWidth: 750,
     },
     formTitle: {
         fontSize: 24,
@@ -225,6 +224,18 @@ const styles = StyleSheet.create({
         marginTop: 12,
     },
     submitButtonText: {
+        color: '#ffffff',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    deleteButton: {
+        backgroundColor: '#ff0000',
+        paddingVertical: 12,
+        borderRadius: 6,
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    deleteButtonText: {
         color: '#ffffff',
         fontSize: 16,
         fontWeight: '600',

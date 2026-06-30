@@ -28,7 +28,6 @@ function RootNavigator() {
 }
 
 function AppShell() {
-  //This makse sure the spalsh screen is visible while the app is loading.
   const { isInitialized } = useAuthContext()
 
   useEffect(() => {
@@ -41,8 +40,6 @@ function AppShell() {
 }
 
 const RootLayout = () => {
-  
-
   return (
     <AuthProvider>
       <GatheringProvider>
