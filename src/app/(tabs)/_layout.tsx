@@ -7,14 +7,17 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 const TabsLayout = () => {
     const { claims } = useAuthContext()
     return (
-        <Tabs screenOptions={{headerShown: false, tabBarShowLabel: false}}>
+        <Tabs 
+            initialRouteName="dashboard" 
+            screenOptions={{headerShown: false, tabBarShowLabel: false}}
+        >
             <Tabs.Protected guard={!!claims}>
                 <Tabs.Screen 
                     name="index" 
                     options={{ href: null }} 
                 />
                 <Tabs.Screen 
-                    name="create-event"
+                    name="create-gathering"
                     options={{
                         tabBarIcon: (tabInfo) => {
                             return (
