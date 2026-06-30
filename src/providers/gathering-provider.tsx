@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { GatheringContext } from '@/contexts/gathering-context'
 import { useAuthContext } from '@/hooks/use-auth-context'
-import { getGatherings } from '@/services/gathering'
+import { getGatherings, postGathering } from '@/services/gathering'
 import { Gathering } from '@/models/gathering'
 
 export const GatheringProvider = ({ children }: { children: React.ReactNode }) => {
@@ -37,13 +37,15 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         )
     }
 
-    const createGathering = async () => {
+    const createGathering = async (payload: Gathering) => {
         setIsLoading(true)
         try {
-
-        } catch {
-
+            const {data, error} = await postGathering(payload)
+            if (error || !data) throw Error()
+        } catch (error: any) {
+            console.error("Error on createGathering: ", error)
         } finally {
+            fetchGatherings()
             setIsLoading(false)
         }
     }

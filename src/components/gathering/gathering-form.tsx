@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, ActivityIndicator, Button} from 'react-native';
 import DatePicker from '../utility/date-picker';
 import { DateForm } from '../utility/date-form';
+import { useGatheringContext } from '@/hooks/use-gathering-context';
+import { router } from 'expo-router';
 
 interface GatheringFormProps {
     onSubmit: (eventData: Gathering) => Promise<void>
@@ -17,6 +19,8 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit }
     const [attire, setAttire] = useState<Attire>('CASUAL')
     const [attireOptions, setAttireOptions] = useState<Attire[]>([])
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+
+    const {activeGathering, setActive} = useGatheringContext()
 
     useEffect(() => {
         
@@ -34,7 +38,7 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit }
 
     }, []);
 
-    const handleCreate = async () => {
+    const handleSubmit = async () => {
 
         setIsSubmitting(true)
 
@@ -46,7 +50,9 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit }
                 attire: attire
             })
         } finally {
+            setActive("")
             setIsSubmitting(false)
+            router.push("/dashboard")
         }
     };
 
@@ -105,7 +111,7 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit }
 
             <TouchableOpacity 
                 style={[styles.submitButton]} 
-                onPress={handleCreate}
+                onPress={handleSubmit}
                 disabled={isSubmitting}
             >
                 {isSubmitting ? <ActivityIndicator size="large" color="#4f46e5" /> :

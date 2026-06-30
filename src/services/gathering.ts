@@ -47,7 +47,7 @@ export async function getGatherings(profile_id: string): Promise<Gathering[] | n
         })
 }
 
-export async function createEvent(payload: Gathering) {
+export async function postGathering(payload: Gathering) {
     const { data, error } = await supabase
         .rpc('create_event_with_owner', { 
             p_name: payload.name,
@@ -61,5 +61,3 @@ export async function createEvent(payload: Gathering) {
     }
     return {data, error: null}
 }
-
-//TODO: Fix Supabase function to stop shoving whole gathering into id

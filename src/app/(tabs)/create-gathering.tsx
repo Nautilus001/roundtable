@@ -2,14 +2,19 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import {GatheringForm} from '@/components/gathering/gathering-form'
 import { Gathering } from '@/models/gathering'
-import { createEvent } from '@/services/gathering'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useGatheringContext } from '@/hooks/use-gathering-context'
 
 const CreateGathering = () => {
 
+    const { createGathering } = useGatheringContext()
+
     const handleSubmit = async (payload: Gathering) => {
-        const { error } = await createEvent(payload)
-        if (error) console.error(error.message)
+        try {
+            await createGathering(payload)
+        } catch (error: any) {
+            console.error("Womp womp")
+        }
     }
 
     return (
