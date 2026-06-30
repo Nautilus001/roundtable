@@ -11,9 +11,10 @@ interface GatheringFormProps {
     initialData? : Gathering
     onSubmit: (eventData: Gathering) => Promise<void>
     isEdit: boolean
+    isNew?: boolean
 }
 
-export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, initialData }) => {
+export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, initialData, isNew=true }) => {
     const [name, setName] = useState(initialData?.name ?? "")
     const [locationName, setLocationName] = useState(initialData?.location ?? "")
     const [date, setDate] = useState(initialData?.start_time ?? new Date())
@@ -21,7 +22,7 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, 
     const [attireOptions, setAttireOptions] = useState<Attire[]>([])
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
-    const {setActive} = useGatheringContext()
+    const {activeGathering, setActive, removeGathering} = useGatheringContext()
 
     useEffect(() => {
         
@@ -45,11 +46,27 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, 
 
         try {
             await onSubmit({
+                id: activeGathering?.id ?? "",
                 name: name.trim(),
                 start_time: date,
                 location: locationName.trim(),
                 attire: attire
             })
+        } finally {
+            setActive("")
+            setIsSubmitting(false)
+            router.push("/dashboard")
+        }
+    }
+
+    const handleDelete = async () => {
+
+        setIsSubmitting(true)
+
+        try {
+            if(activeGathering) await removeGathering(activeGathering)
+        } catch (error: any) {
+            console.error("Error deleting the gathering")
         } finally {
             setActive("")
             setIsSubmitting(false)
@@ -117,10 +134,24 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, 
             >
                 {isSubmitting ? <ActivityIndicator size="large" color="#4f46e5" /> :
                     <Text style={styles.submitButtonText}>
-                        Create Gathering
+                        {isNew ? "Create" : "Update"} Gathering
                     </Text>
                 }
             </TouchableOpacity>
+
+            {!isNew &&
+                <TouchableOpacity 
+                    style={[styles.submitButton]} 
+                    onPress={handleDelete}
+                    disabled={isSubmitting}
+                >
+                    {isSubmitting ? <ActivityIndicator size="large" color="#4f46e5" /> :
+                        <Text style={styles.submitButtonText}>
+                            Delete Gathering
+                        </Text>
+                    }
+                </TouchableOpacity>
+            }
         </ScrollView>
     )
 }

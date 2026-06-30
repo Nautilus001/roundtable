@@ -9,6 +9,7 @@ export type GatheringContextType = {
   fetchGatherings: () => Promise<any>
   createGathering: (payload: Gathering) => Promise<any>
   updateGathering: (payload: Gathering) => Promise<any>
+  removeGathering: (payload: Gathering) => Promise<any>
 }
 
 export const GatheringContext = createContext<GatheringContextType>({
@@ -18,5 +19,6 @@ export const GatheringContext = createContext<GatheringContextType>({
   setActive: () => {},
   fetchGatherings:  async () => {},
   createGathering: async () => {},
-  updateGathering: async () => {}
+  updateGathering: async () => {},
+  removeGathering: async () => {},
 })

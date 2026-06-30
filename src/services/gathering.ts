@@ -25,7 +25,7 @@ export async function getGatherings(profile_id: string): Promise<GatheringsRetur
         .eq('profile_id', profile_id)
 
     if (error || !data) {
-        console.error('Supabase error fetching gatherings:', error.message)
+        console.error('Error fetching gatherings:', error.message)
         return { data: null, error }
     }
         
@@ -69,12 +69,13 @@ export async function putGathering(payload: Gathering) : Promise<GatheringsRetur
     const { data, error } = await supabase
         .from('events')
         .update({ 
+            id: payload.id,
             name: payload.name,
             start_time: payload.start_time,
             location: payload.location,
             attire: payload.attire
         })
-        .eq('gathering_id', payload.id)
+        .eq('id', payload.id)
         .select()
 
     if(error || !data) {
@@ -83,3 +84,20 @@ export async function putGathering(payload: Gathering) : Promise<GatheringsRetur
     }
     return {data, error: null}
 }
+
+export async function deleteGathering(payload: Gathering) : Promise<GatheringsReturnType>{
+    const { error } = await supabase
+                .from('events')
+                .delete()
+                .eq('id', payload.id ?? "")
+
+    if(error) {
+        console.error('Error deleting gathering')
+        return {data: null, error}
+    }
+    return {data: null, error: null}
+}
+
+
+
+ 

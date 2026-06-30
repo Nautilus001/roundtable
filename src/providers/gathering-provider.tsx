@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { GatheringContext } from '@/contexts/gathering-context'
 import { useAuthContext } from '@/hooks/use-auth-context'
-import { getGatherings, postGathering, putGathering } from '@/services/gathering'
+import { getGatherings, postGathering, putGathering, deleteGathering } from '@/services/gathering'
 import { Gathering } from '@/models/gathering'
 
 export const GatheringProvider = ({ children }: { children: React.ReactNode }) => {
@@ -31,10 +31,11 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         fetchGatherings()
     }, [])
 
+
     const setActive = (gathering_id: string) => {
-        setActiveGathering(
-            gatherings.find(item => item.id === gathering_id) ?? null
-        )
+        const g = gatherings.find(item => item.id === gathering_id) ?? null
+        console.log(g)
+        setActiveGathering(g)
     }
 
     const createGathering = async (payload: Gathering) => {
@@ -65,8 +66,31 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         }
     }
 
+    const removeGathering = async (payload: Gathering) => {
+        setIsLoading(true)
+        try {
+            const {error} = await deleteGathering(payload)
+            if (error) throw Error()
+            setActive("")
+        } catch (error: any) {
+            console.error("Error on createGathering: ", error)
+        } finally {
+            fetchGatherings()
+            setIsLoading(false)
+        }
+    }
+
     return (
-        <GatheringContext.Provider value={{isLoading, gatherings, activeGathering, setActive, fetchGatherings, createGathering, updateGathering}}>
+        <GatheringContext.Provider value={{
+            isLoading, 
+            gatherings, 
+            activeGathering, 
+            setActive, 
+            fetchGatherings, 
+            createGathering, 
+            updateGathering, 
+            removeGathering,
+        }}>
             {children}
         </GatheringContext.Provider>
     )

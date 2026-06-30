@@ -8,6 +8,7 @@ const TabsLayout = () => {
     const { claims } = useAuthContext()
     return (
         <Tabs 
+            initialRouteName='(dashboard)'
             screenOptions={{headerShown: false, tabBarShowLabel: false}}
         >
             <Tabs.Protected guard={!!claims}>
