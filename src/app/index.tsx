@@ -6,14 +6,16 @@ import LogoFork from '@/components/visual/logo-fork'
 import LogoDrink from '@/components/visual/logo-drink'
 import LogoFork2 from '@/components/visual/logo-fork-2'
 import LogoNegFork from '@/components/visual/logo-fork-negative'
+import {useNotifContext} from '@/hooks/use-notification-context'
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [e, setError] = useState<string | null>(null)
   const [isRegister, setIsRegister] = useState(false)
   const [logo, setLogo] = useState(0)
   const { login, register} = useAuthContext()
+  const { showToast } = useNotifContext()
   const logos = [<LogoDrink />, <LogoFork />, <LogoFork2 />, <LogoNegFork />]
 
   const router = useRouter()
@@ -31,6 +33,11 @@ export default function LoginScreen() {
         router.replace("/getting-started")
       } catch (error: any) {
         setError(error.message)
+        showToast({
+            message: e ?? "",
+            severity: 1,
+            timeout: 1000
+        })
         setIsRegister(true)
       }
     } else {
@@ -77,15 +84,13 @@ export default function LoginScreen() {
           secureTextEntry
         />
 
-        
-
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>{isRegister ? "Sign Up" : "Login"}</Text>
         </TouchableOpacity>
 
-        {error &&
+        {e &&
         <View style={styles.buttonSecondary}>
-        <Text style= {styles.errorText}>An error has occurred: {error}</Text>
+        <Text style= {styles.errorText}>An error has occurred: {e}</Text>
         </View>}
 
         

@@ -2,6 +2,7 @@ import { SplashScreenController } from '@/components/splash-screen-controller'
 import { useAuthContext } from '@/hooks/use-auth-context'
 import { AuthProvider } from '@/providers/auth-provider'
 import { GatheringProvider } from '@/providers/gathering-provider'
+import {NotificationProvider} from '@/providers/notification-provider'
 import { SplashScreen, Stack, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect } from 'react'
@@ -44,7 +45,9 @@ const RootLayout = () => {
     <AuthProvider>
       <GatheringProvider>
         <SafeAreaProvider>
-            <AppShell/>
+            <NotificationProvider>
+                <AppShell/>
+            </NotificationProvider>
         </SafeAreaProvider>
       </GatheringProvider>
     </AuthProvider>
