@@ -24,7 +24,8 @@ export const ItemTile: React.FC<ItemTileProps> = ({ item, onItemUpdated, onItemR
     year: 'numeric',
   });
 
-  const executeRemove = async () => {
+  const handleRemove = async () => {
+    console.log("execute remove")
     setIsDeleting(true);
     try {
       await removeItem(item);
@@ -36,17 +37,6 @@ export const ItemTile: React.FC<ItemTileProps> = ({ item, onItemUpdated, onItemR
       Alert.alert('Error', error.message || 'Failed to remove item.');
       setIsDeleting(false);
     }
-  };
-
-  const handleRemove = () => {
-    Alert.alert(
-      "Remove Item",
-      `Are you sure you want to remove "${item.name}"?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Remove", style: "destructive", onPress: executeRemove }
-      ]
-    );
   };
 
   const handleEditSaved = (updatedItem: Item) => {
@@ -64,7 +54,6 @@ export const ItemTile: React.FC<ItemTileProps> = ({ item, onItemUpdated, onItemR
             ) : (
               canEdit && (
                 <>
-                  {/* Triggers Modal */}
                   <TouchableOpacity onPress={() => setIsEditModalVisible(true)}>
                     <Text style={styles.editAction}>Edit</Text>
                   </TouchableOpacity>

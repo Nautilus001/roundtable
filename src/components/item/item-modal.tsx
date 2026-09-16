@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Platform } from 'react-native'
 import { Picker } from '@react-native-picker/picker'
-import { postItem } from '@/services/items'
-import { getCategories, Category } from '@/services/categories'
+import { postItem, putItem } from '@/services/items'
+import { getRankables, Rankable } from '@/services/categories'
 import { Item } from '@/models/item'
 
 interface ItemModalProps {
@@ -16,7 +16,7 @@ interface ItemModalProps {
 export const ItemModal: React.FC<ItemModalProps> = ({ visible, gatheringId, onClose, item, onSave }) => {
   const [name, setName] = useState('')
   const [categoryId, setCategoryId] = useState('')
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categories, setCategories] = useState<Rankable[]>([])
   const [isFetchingCategories, setIsFetchingCategories] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -30,7 +30,7 @@ export const ItemModal: React.FC<ItemModalProps> = ({ visible, gatheringId, onCl
 
       const loadCategories = async () => {
         setIsFetchingCategories(true)
-        const { data, error } = await getCategories()
+        const { data, error } = await getRankables(gatheringId)
         setIsFetchingCategories(false)
 
         if (error || !data) {
@@ -115,10 +115,9 @@ export const ItemModal: React.FC<ItemModalProps> = ({ visible, gatheringId, onCl
             placeholder="e.g. Ribeye Steak"
           />
 
-          <Text style={styles.label}>Category</Text>
           {isFetchingCategories ? (
             <ActivityIndicator style={styles.loader} color="#4f46e5" size="small" />
-          ) : (
+          ) : categories && categories.length > 0 ? (
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={categoryId}
@@ -131,7 +130,7 @@ export const ItemModal: React.FC<ItemModalProps> = ({ visible, gatheringId, onCl
                 ))}
               </Picker>
             </View>
-          )}
+          ) : null}
 
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.cancelButton} onPress={onClose} disabled={isLoading}>

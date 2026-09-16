@@ -172,7 +172,6 @@ const GatheringDetails = () => {
                     <Text style={styles.emptyStateText}>No attendees registered yet.</Text>
                 )}
 
-                <Text style={styles.sectionTitle}>Items</Text>
                 <View style={styles.sectionHeaderRow}>
                     <Text style={styles.sectionTitle}>Items</Text>
                     {isHost && <TouchableOpacity 
@@ -202,7 +201,7 @@ const GatheringDetails = () => {
                     visible={isAddModalOpen} 
                     gatheringId={activeGathering.id}
                     onClose={() => setIsAddModalOpen(false)}
-                    onItemAdded={handleItemAdded}
+                    onSave={handleItemAdded}
                 />
             )}
         </SafeAreaView>

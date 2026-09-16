@@ -1,19 +1,22 @@
 import { supabase } from "./supabase";
 
-export interface Category {
+export interface Rankable {
   id: string
   name: string
   scale_id?: string
 }
 
-export async function getCategories(): Promise<{ data: Category[] | null; error: Error | null }> {
+export async function getRankables(
+  gathering_id: string
+): Promise<{ data: Rankable[] | null; error: Error | null }> {
   const { data, error } = await supabase
-    .from('categories')
+    .from('rankables')
     .select('id, name')
+    .eq('gathering_id', gathering_id)
     .order('name', { ascending: true })
 
   if (error) {
-    console.error('Error fetching categories:', error.message)
+    console.error('Error fetching rankables:', error.message)
     return { data: null, error }
   }
 
