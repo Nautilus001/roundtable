@@ -1,4 +1,4 @@
-export type NightRole = 'Host' | 'Voter'
+export type GatheringRole = 'Host' | 'Voter'
 
 export type GatheringDraft = {
   name: string
@@ -16,7 +16,7 @@ export type GatheringRecord = {
   gatheringCode: string
 }
 
-export type NightStore = {
+export type GatheringStore = {
   insertGathering(
     hostProfileId: string,
     draft: GatheringDraft,
@@ -25,17 +25,17 @@ export type NightStore = {
   addVoter(gatheringId: string, profileId: string): Promise<void>
 }
 
-export class NightError extends Error {
+export class GatheringError extends Error {
   readonly code: 'not_found'
 
   constructor(code: 'not_found', message: string) {
     super(message)
-    this.name = 'NightError'
+    this.name = 'GatheringError'
     this.code = code
   }
 }
 
-export function createNight(store: NightStore) {
+export function createGatheringModule(store: GatheringStore) {
   return {
     async createGathering(profileId: string, draft: GatheringDraft) {
       const gathering = await store.insertGathering(profileId, draft)
@@ -47,7 +47,7 @@ export function createNight(store: NightStore) {
         gatheringCode.trim().toUpperCase(),
       )
       if (!gathering) {
-        throw new NightError(
+        throw new GatheringError(
           'not_found',
           'We couldn’t find that Gathering. Double-check your code.',
         )
@@ -58,4 +58,4 @@ export function createNight(store: NightStore) {
   }
 }
 
-export type Night = ReturnType<typeof createNight>
+export type GatheringModule = ReturnType<typeof createGatheringModule>

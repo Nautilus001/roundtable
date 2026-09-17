@@ -1,9 +1,9 @@
 import {
   GatheringDraft,
   GatheringRecord,
-  NightRole,
-  NightStore,
-} from './night'
+  GatheringRole,
+  GatheringStore,
+} from './gathering'
 
 const CODE_LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ'
 
@@ -20,9 +20,9 @@ function randomCode(taken: Set<string>): string {
   throw new Error('Could not mint a unique Gathering code')
 }
 
-export function createMemoryNightStore(): NightStore {
+export function createMemoryGatheringStore(): GatheringStore {
   const gatherings = new Map<string, GatheringRecord>()
-  const members = new Map<string, Map<string, NightRole>>()
+  const members = new Map<string, Map<string, GatheringRole>>()
   const codes = new Set<string>()
   let nextId = 1
 

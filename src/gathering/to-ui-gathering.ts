@@ -1,9 +1,9 @@
 import { Attire, EventRole, Gathering } from '@/models/gathering'
-import { GatheringRecord, NightRole } from './night'
+import { GatheringRecord, GatheringRole } from './gathering'
 
 export function toUiGathering(
   gathering: GatheringRecord,
-  role: NightRole,
+  role: GatheringRole,
 ): Gathering {
   const uiRole: EventRole = role === 'Host' ? 'OWNER' : 'VOTER'
   return {

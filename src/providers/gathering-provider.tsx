@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { GatheringContext } from '@/contexts/gathering-context'
 import { useAuthContext } from '@/hooks/use-auth-context'
 import { getGatherings, putGathering, deleteGathering } from '@/services/gathering'
-import { appNight } from '@/night/app-night'
-import { NightError } from '@/night/night'
-import { toUiGathering } from '@/night/to-ui-gathering'
+import { appGathering } from '@/gathering/app-gathering'
+import { GatheringError } from '@/gathering/gathering'
+import { toUiGathering } from '@/gathering/to-ui-gathering'
 import { EventRole, Gathering } from '@/models/gathering'
 import { fetchEventAttendeesWithRoles } from '@/services/profiles'
 import { Profile } from '@/models/profile'
@@ -66,7 +66,7 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         if (!profile) throw new Error('Not signed in')
         setIsLoading(true)
         try {
-            const result = await appNight.createGathering(profile.id, {
+            const result = await appGathering.createGathering(profile.id, {
                 name: payload.name,
                 startTime: payload.start_time,
                 location: typeof payload.location === 'string' ? payload.location : '',
@@ -87,12 +87,12 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
             return { ok: false as const, message: 'You need to be signed in to join.' }
         }
         try {
-            const result = await appNight.joinGathering(profile.id, gatheringCode)
+            const result = await appGathering.joinGathering(profile.id, gatheringCode)
             setActiveGathering(toUiGathering(result.gathering, result.role))
             await fetchGatherings()
             return { ok: true as const, gatheringId: result.gathering.id }
         } catch (error: any) {
-            if (error instanceof NightError && error.code === 'not_found') {
+            if (error instanceof GatheringError && error.code === 'not_found') {
                 return { ok: false as const, message: error.message }
             }
             console.error('Error on joinGathering: ', error)

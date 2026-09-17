@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { createMemoryNightStore } from './memory-night-store'
-import { NightError, createNight } from './night'
+import { createMemoryGatheringStore } from './memory-gathering-store'
+import { GatheringError, createGatheringModule } from './gathering'
 
-function nightWithMemory() {
-  return createNight(createMemoryNightStore())
+function gatheringModuleWithMemory() {
+  return createGatheringModule(createMemoryGatheringStore())
 }
 
 const fields = {
@@ -13,10 +13,10 @@ const fields = {
   attire: 'CASUAL',
 }
 
-describe('TasteTogether night', () => {
+describe('Gathering', () => {
   it('lets a Profile create a Gathering as Host with a Gathering code', async () => {
-    const night = nightWithMemory()
-    const result = await night.createGathering('profile-host', fields)
+    const gatherings = gatheringModuleWithMemory()
+    const result = await gatherings.createGathering('profile-host', fields)
 
     expect(result.role).toBe('Host')
     expect(result.gathering.name).toBe('Saturday beers')
@@ -25,10 +25,10 @@ describe('TasteTogether night', () => {
   })
 
   it('lets another Profile join that Gathering as Voter by Gathering code', async () => {
-    const night = nightWithMemory()
-    const created = await night.createGathering('profile-host', fields)
+    const gatherings = gatheringModuleWithMemory()
+    const created = await gatherings.createGathering('profile-host', fields)
 
-    const joined = await night.joinGathering(
+    const joined = await gatherings.joinGathering(
       'profile-voter',
       created.gathering.gatheringCode,
     )
@@ -39,11 +39,11 @@ describe('TasteTogether night', () => {
   })
 
   it('rejects joining with an unknown Gathering code', async () => {
-    const night = nightWithMemory()
+    const gatherings = gatheringModuleWithMemory()
 
-    await expect(night.joinGathering('profile-voter', 'ZZZZ-0000')).rejects.toMatchObject({
-      name: 'NightError',
+    await expect(gatherings.joinGathering('profile-voter', 'ZZZZ-0000')).rejects.toMatchObject({
+      name: 'GatheringError',
       code: 'not_found',
-    } satisfies Partial<NightError>)
+    } satisfies Partial<GatheringError>)
   })
 })

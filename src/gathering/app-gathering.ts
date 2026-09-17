@@ -1,5 +1,7 @@
 import { supabase } from '@/services/supabase'
-import { createNight } from './night'
-import { createSupabaseNightStore } from './supabase-night-store'
+import { createGatheringModule } from './gathering'
+import { createSupabaseGatheringStore } from './supabase-gathering-store'
 
-export const appNight = createNight(createSupabaseNightStore(supabase))
+export const appGathering = createGatheringModule(
+  createSupabaseGatheringStore(supabase),
+)

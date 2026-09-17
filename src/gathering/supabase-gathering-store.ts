@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { Gathering } from '@/models/gathering'
 import { joinEventByCode, postGathering } from '@/services/gathering'
-import { GatheringRecord, NightError, NightStore } from './night'
+import { GatheringError, GatheringRecord, GatheringStore } from './gathering'
 
 function mapEventRow(row: {
   id: string
@@ -26,7 +26,7 @@ function asRow(data: unknown) {
   return data
 }
 
-export function createSupabaseNightStore(client: SupabaseClient): NightStore {
+export function createSupabaseGatheringStore(client: SupabaseClient): GatheringStore {
   return {
     async insertGathering(_hostProfileId, draft) {
       const { data, error } = await postGathering({
@@ -76,7 +76,7 @@ export function createSupabaseNightStore(client: SupabaseClient): NightStore {
         .eq('id', gatheringId)
         .single()
       if (lookupError || !row?.event_code) {
-        throw new NightError(
+        throw new GatheringError(
           'not_found',
           'We couldn’t find that Gathering. Double-check your code.',
         )
@@ -86,7 +86,7 @@ export function createSupabaseNightStore(client: SupabaseClient): NightStore {
         throw new Error(error.message)
       }
       if (!data?.success) {
-        throw new NightError(
+        throw new GatheringError(
           'not_found',
           data?.message || 'We couldn’t find that Gathering. Double-check your code.',
         )
