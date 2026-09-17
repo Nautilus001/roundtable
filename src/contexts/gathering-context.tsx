@@ -2,6 +2,10 @@ import { Gathering } from '@/models/gathering'
 import { Item } from '@/models/item'
 import { createContext } from 'react'
 
+export type JoinGatheringResult =
+  | { ok: true; gatheringId: string }
+  | { ok: false; message: string }
+
 interface GatheringContextType {
   gatherings: Gathering[] | null
   items: Item[] | null
@@ -10,6 +14,7 @@ interface GatheringContextType {
   setActive: (gathering_id: string) => void
   fetchGatherings: () => Promise<any>
   createGathering: (payload: Gathering) => Promise<any>
+  joinGathering: (gatheringCode: string) => Promise<JoinGatheringResult>
   updateGathering: (payload: Gathering) => Promise<any>
   removeGathering: (payload: Gathering) => Promise<any>
   fetchItems: (gathering_id: string) => Promise<any>
@@ -27,6 +32,7 @@ export const GatheringContext = createContext<GatheringContextType>({
   setActive: () => {},
   fetchGatherings:  async () => {},
   createGathering: async () => {},
+  joinGathering: async () => ({ ok: false, message: '' }),
   updateGathering: async () => {},
   removeGathering: async () => {},
   fetchItems:  async () => {},

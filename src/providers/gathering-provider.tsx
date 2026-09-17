@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { GatheringContext } from '@/contexts/gathering-context'
 import { useAuthContext } from '@/hooks/use-auth-context'
-import { getGatherings, postGathering, putGathering, deleteGathering, joinEventByCode } from '@/services/gathering'
+import { getGatherings, putGathering, deleteGathering } from '@/services/gathering'
+import { appNight } from '@/night/app-night'
+import { NightError } from '@/night/night'
+import { toUiGathering } from '@/night/to-ui-gathering'
 import { EventRole, Gathering } from '@/models/gathering'
 import { fetchEventAttendeesWithRoles } from '@/services/profiles'
 import { Profile } from '@/models/profile'
@@ -60,20 +63,40 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
     }
 
     const createGathering = async (payload: Gathering) => {
+        if (!profile) throw new Error('Not signed in')
         setIsLoading(true)
         try {
-            const {data, error} = await postGathering(payload)
-            if (error || !data) throw Error()
-            if (Array.isArray(data)) {
-                setActive(data[0].id ?? "")
-            } else {
-                setActive(data.id ?? "")
-            }
+            const result = await appNight.createGathering(profile.id, {
+                name: payload.name,
+                startTime: payload.start_time,
+                location: typeof payload.location === 'string' ? payload.location : '',
+                attire: payload.attire,
+            })
+            setActiveGathering(toUiGathering(result.gathering, result.role))
         } catch (error: any) {
             console.error("Error on createGathering: ", error)
+            throw error
         } finally {
             fetchGatherings()
             setIsLoading(false)
+        }
+    }
+
+    const joinGathering = async (gatheringCode: string) => {
+        if (!profile) {
+            return { ok: false as const, message: 'You need to be signed in to join.' }
+        }
+        try {
+            const result = await appNight.joinGathering(profile.id, gatheringCode)
+            setActiveGathering(toUiGathering(result.gathering, result.role))
+            await fetchGatherings()
+            return { ok: true as const, gatheringId: result.gathering.id }
+        } catch (error: any) {
+            if (error instanceof NightError && error.code === 'not_found') {
+                return { ok: false as const, message: error.message }
+            }
+            console.error('Error on joinGathering: ', error)
+            return { ok: false as const, message: 'Something went wrong connecting to the server.' }
         }
     }
 
@@ -198,6 +221,7 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
             setActive, 
             fetchGatherings, 
             createGathering, 
+            joinGathering,
             updateGathering, 
             removeGathering,
             fetchItems, 
