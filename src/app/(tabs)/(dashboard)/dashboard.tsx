@@ -33,7 +33,7 @@ const Dashboard = () => {
     },[profile])
 
     return (
-        <Screen style={{ alignItems: 'center' }}>
+        <Screen style={{ alignItems: 'center'}}>
             <Stack gap="md" align="center">
                 <Text variant="title">Dashboard</Text>
                 <Button onPress={() => loadData()}>Refresh</Button>
