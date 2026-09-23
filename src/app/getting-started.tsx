@@ -1,11 +1,14 @@
-import { StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native'
 import React, { useState } from 'react'
 import AccountField from '@/components/account/account-field'
 import { useAuthContext } from '@/hooks/use-auth-context'
 import { router } from 'expo-router'
 import { updateProfile } from '@/services/profiles'
-
-const { width } = Dimensions.get('window')
+import { Button } from '@/components/ui/button'
+import { ErrorBanner } from '@/components/ui/error-banner'
+import { FieldGroup } from '@/components/ui/field-group'
+import { Screen } from '@/components/ui/screen'
+import { Stack } from '@/components/ui/stack'
+import { Text } from '@/components/ui/text'
 
 const GettingStarted = () => {
     const { profile, refreshProfile } = useAuthContext()
@@ -31,126 +34,39 @@ const GettingStarted = () => {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.headerContainer}>
-                <Text style={styles.title}>Let's get to know each other!</Text>
-                <Text style={styles.subtitle}>Before we get started, please tell us your name.</Text>
-            </View>
+        <Screen>
+            <Stack gap="lg" style={{ flex: 1, justifyContent: 'space-between' }}>
+                <Stack gap="sm">
+                    <Text variant="title">Let's get to know each other!</Text>
+                    <Text variant="body">Before we get started, please tell us your name.</Text>
+                </Stack>
 
-            <View style={styles.formContainer}>
-                <View style={styles.fieldWrapper}>
-                    <Text style={styles.label}>First Name</Text>
-                    <AccountField 
-                        placeholder={'Enter your first name'} 
-                        value={firstName} 
-                        setValue={setFirstName} 
-                        isEdit={true}
-                    />
-                </View>
+                <Stack gap="lg" style={{ flex: 1 }}>
+                    <FieldGroup label="First Name">
+                        <AccountField 
+                            placeholder={'Enter your first name'} 
+                            value={firstName} 
+                            setValue={setFirstName} 
+                            isEdit={true}
+                        />
+                    </FieldGroup>
+                    <FieldGroup label="Last Name">
+                        <AccountField 
+                            placeholder={'Enter your last name'} 
+                            value={lastName} 
+                            setValue={setLastName} 
+                            isEdit={true}
+                        />
+                    </FieldGroup>
+                    {error && (
+                        <ErrorBanner>Please do not leave fields blank.</ErrorBanner>
+                    )}
+                </Stack>
 
-                <View style={styles.fieldWrapper}>
-                    <Text style={styles.label}>Last Name</Text>
-                    <AccountField 
-                        placeholder={'Enter your last name'} 
-                        value={lastName} 
-                        setValue={setLastName} 
-                        isEdit={true}
-                    />
-                </View>
-
-                {error && (
-                    <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>Please do not leave fields blank.</Text>
-                    </View>
-                )}
-            </View>
-
-            <View style={styles.footerContainer}>
-                <TouchableOpacity 
-                    style={styles.button} 
-                    onPress={handleSubmit}
-                    activeOpacity={0.8}
-                >
-                    <Text style={styles.buttonText}>Let's Go!</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+                <Button onPress={handleSubmit}>Let's Go!</Button>
+            </Stack>
+        </Screen>
     )
 }
 
 export default GettingStarted
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f9fafb',
-        paddingHorizontal: 24,
-        justifyContent: 'space-between',
-        paddingTop: 60,
-        paddingBottom: 40,
-    },
-    headerContainer: {
-        marginTop: 20,
-        marginBottom: 32,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: '700',
-        color: '#111827',
-        marginBottom: 8,
-        letterSpacing: -0.5,
-    },
-    subtitle: {
-        fontSize: 16,
-        color: '#6b7280',
-        lineHeight: 24,
-    },
-    formContainer: {
-        flex: 1,
-        justifyContent: 'flex-start',
-    },
-    fieldWrapper: {
-        marginBottom: 20,
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#374151',
-        marginBottom: 6,
-    },
-    errorContainer: {
-        backgroundColor: '#fef2f2',
-        borderWidth: 1,
-        borderColor: '#fca5a5',
-        borderRadius: 8,
-        padding: 12,
-        marginTop: 8,
-    },
-    errorText: {
-        color: '#b91c1c',
-        fontSize: 14,
-        fontWeight: '500',
-        textAlign: 'center',
-    },
-    footerContainer: {
-        marginTop: 'auto',
-    },
-    button: {
-        backgroundColor: '#4f46e5',
-        borderRadius: 12,
-        height: 52,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#4f46e5',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-        elevation: 3,
-        width: width - 48,
-    },
-    buttonText: {
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: '600',
-    },
-})

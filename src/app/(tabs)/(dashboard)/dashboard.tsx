@@ -1,18 +1,23 @@
-import { StyleSheet, Text, TouchableOpacity, View, FlatList, useWindowDimensions, ActivityIndicator} from 'react-native'
+import { FlatList, View, TouchableOpacity, ActivityIndicator, useWindowDimensions } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import { useAuthContext } from '@/hooks/use-auth-context'
+import { useThemeContext } from '@/hooks/use-theme'
 import GatheringTile from '@/components/gathering/gathering-tile'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useGatheringContext } from '@/hooks/use-gathering-context'
 import {router} from 'expo-router'
+import { Button } from '@/components/ui/button'
+import { Screen } from '@/components/ui/screen'
+import { Stack } from '@/components/ui/stack'
+import { Text } from '@/components/ui/text'
 
 const Dashboard = () => {
     const { profile } = useAuthContext()
+    const { theme } = useThemeContext()
     const { gatherings, fetchGatherings, setActive } = useGatheringContext()
     const [isLoading, setIsLoading]  = useState<boolean>(true)
 
     const { width } = useWindowDimensions()
-    const availableWidth = width - 32 
+    const availableWidth = width - theme.spacing.xl 
     const numColumns = Math.max(1, Math.floor(availableWidth / 150))
 
     const loadData = async () => {
@@ -28,31 +33,35 @@ const Dashboard = () => {
     },[profile])
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Dashboard</Text>
-            <TouchableOpacity style={styles.submitButton} onPress={() => loadData()}>
-                <Text style={styles.submitButtonText}>Refresh</Text>
-            </TouchableOpacity>
+        <Screen style={{ alignItems: 'center' }}>
+            <Stack gap="md" align="center">
+                <Text variant="title">Dashboard</Text>
+                <Button onPress={() => loadData()}>Refresh</Button>
+            </Stack>
             {(isLoading) ? (
-                <ActivityIndicator size="large" color="#4f46e5" />
+                <ActivityIndicator size="large" color={theme.colors.action} />
             ) : (gatherings && gatherings.length > 0) ? (
                 <FlatList
                     key={`grid-${numColumns}`} 
                     data={gatherings}
                     numColumns={numColumns}
-                    contentContainerStyle={styles.listContainer}
+                    contentContainerStyle={{
+                        width: '100%',
+                        gap: theme.spacing.md,
+                        alignItems: 'center',
+                    }}
                     renderItem={({item}) => (
                         <TouchableOpacity onPress={() => {
                             setActive(item.id ?? "")
                             console.log(item)
                             router.push({
-                                pathname: '/(tabs)/(dashboard)/[id]',
+                                pathname: '/(gathering)/[id]/dashboard',
                                 params: { id: item.id ?? "" }
                             })
                         }}>
                             <View style={{ 
                                 width: availableWidth / numColumns, 
-                                padding: 6
+                                padding: theme.spacing.xs
                             }}>
                                 <GatheringTile item={item} />
                             </View>
@@ -62,54 +71,10 @@ const Dashboard = () => {
                     showsVerticalScrollIndicator={false}
                 />
             ) : (
-                <Text style={styles.title}>No events found.</Text>
+                <Text variant="title">No events found.</Text>
             )}
-        </SafeAreaView>
+        </Screen>
     )
 }
 
 export default Dashboard
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f9fafb',
-        padding: 16,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        color: '#111827',
-    },
-    listContainer: {
-        width: '100%',
-        gap: 12, // Native gap spacing between tiles
-        marginBottom: 20,
-    },
-    button: {
-        backgroundColor: '#4f46e5',
-        paddingVertical: 12,
-        paddingHorizontal: 24,
-        borderRadius: 8,
-    },
-    buttonText: {
-        color: '#ffffff',
-        fontWeight: '600',
-        fontSize: 16,
-    },
-    submitButton: {
-        backgroundColor: '#4f46e5',
-        padding: 16,
-        borderRadius: 8,
-        alignItems: 'center',
-        margin: 12,
-    },
-    submitButtonText: {
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: '600',
-    },
-})

@@ -1,26 +1,36 @@
-import { StyleSheet} from 'react-native'
 import React from 'react'
 import { Tabs } from 'expo-router'
 import { useAuthContext } from '@/hooks/use-auth-context'
+import { useThemeContext } from '@/hooks/use-theme'
 import Ionicons from '@react-native-vector-icons/ionicons'
 
 const TabsLayout = () => {
     const { claims } = useAuthContext()
+    const { theme } = useThemeContext()
     return (
         <Tabs 
             initialRouteName='(dashboard)'
-            screenOptions={{headerShown: false, tabBarShowLabel: false}}
+            screenOptions={{
+                headerShown: false,
+                tabBarShowLabel: false,
+                tabBarStyle: {
+                    backgroundColor: theme.colors.surface,
+                    borderTopColor: theme.colors.border,
+                },
+                tabBarActiveTintColor: theme.colors.action,
+                tabBarInactiveTintColor: theme.colors.textSecondary,
+            }}
         >
             <Tabs.Protected guard={!!claims}>
                 <Tabs.Screen 
-                    name="create-gathering"
+                    name="(gathering-mgmt)"
                     options={{
                         tabBarIcon: (tabInfo) => {
                             return (
                                 <Ionicons
                                     name="calendar"
                                     size={24}
-                                    color={tabInfo.focused ? "#006600" : "#8e8e93"}
+                                    color={tabInfo.color}
                                 />
                             )
                         },
@@ -35,7 +45,7 @@ const TabsLayout = () => {
                                 <Ionicons
                                     name="home"
                                     size={24}
-                                    color={tabInfo.focused ? "#006600" : "#8e8e93"}
+                                    color={tabInfo.color}
                                 />
                             )
                         },
@@ -50,7 +60,7 @@ const TabsLayout = () => {
                                 <Ionicons
                                     name="person"
                                     size={24}
-                                    color={tabInfo.focused ? "#006600" : "#8e8e93"}
+                                    color={tabInfo.color}
                                 />
                             )
                         },
@@ -63,5 +73,3 @@ const TabsLayout = () => {
     }
 
 export default TabsLayout
-
-const styles = StyleSheet.create({})

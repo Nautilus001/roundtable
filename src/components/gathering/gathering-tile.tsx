@@ -1,12 +1,16 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Gathering } from '@/models/gathering'
+import { useThemeContext } from '@/hooks/use-theme'
+import { Theme } from '@/constants/theme'
 
 interface GatheringTileProps {
     item: Gathering
 }
 
 export const GatheringTile: React.FC<GatheringTileProps> = ({item}) => {  
+    const { theme } = useThemeContext()
+    const styles = useMemo(() => createStyles(theme), [theme])
 
     const formattedDate = new Date(item.start_time).toLocaleString([], {
         month: 'short',
@@ -41,15 +45,15 @@ export const GatheringTile: React.FC<GatheringTileProps> = ({item}) => {
 
 export default GatheringTile
 
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
   eventTile: {
-    padding: 16,
+    padding: theme.spacing.md,
     maxWidth: 384,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    shadowColor: '#000000',
+    borderColor: theme.colors.border,
+    borderRadius: theme.radius.md,
+    shadowColor: theme.colors.textPrimary,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -59,42 +63,42 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
   },
   eventName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#111827',
+    color: theme.colors.textPrimary,
   },
   eventRole: {
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    color: '#6b7280',
+    color: theme.colors.textSecondary,
   },
   eventDate: {
-    marginBottom: 16,
+    marginBottom: theme.spacing.md,
     fontSize: 14,
-    color: '#4f46e5',
+    color: theme.colors.action,
     fontWeight: '500',
   },
   eventDetails: {
     flexDirection: 'column',
-    gap: 6,
+    gap: theme.spacing.xs,
   },
   detailItem: {
     fontSize: 14,
-    color: '#4b5563',
+    color: theme.colors.textSecondary,
   },
   detailLabel: {
-    color: '#9ca3af',
+    color: theme.colors.textSecondary,
   },
   eventCode: {
     fontFamily: 'Platform-specific-monospace',
-    backgroundColor: '#f3f4f6',
-    paddingHorizontal: 4,
+    backgroundColor: theme.colors.background,
+    paddingHorizontal: theme.spacing.xs,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: theme.radius.sm,
   },
 })

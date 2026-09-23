@@ -1,11 +1,13 @@
-import { SplashScreenController } from '@/components/splash-screen-controller'
 import { useAuthContext } from '@/hooks/use-auth-context'
+import { useThemeContext } from '@/hooks/use-theme'
 import { AuthProvider } from '@/providers/auth-provider'
 import { GatheringProvider } from '@/providers/gathering-provider'
-import { SplashScreen, Stack, useSegments } from 'expo-router'
+import { ThemeProvider } from '@/providers/theme-provider'
+import { SplashScreen, Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect } from 'react'
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
+import { View } from 'react-native'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -20,9 +22,9 @@ function RootNavigator() {
         </Stack.Protected>
         <Stack.Protected guard={!!claims}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(gathering)/[id]/dashboard" options={{ headerShown: false }} />
           <Stack.Screen name="getting-started"/>
         </Stack.Protected>
-        <Stack.Screen name="+not-found" />
       </Stack>
   )
 }
@@ -39,15 +41,28 @@ function AppShell() {
   return <RootNavigator/>
 }
 
+function ThemedAppShell() {
+  const { theme, isDark } = useThemeContext()
+
+  return (
+    <SafeAreaProvider>
+      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+        <StatusBar style={isDark ? 'light' : 'dark'} />
+        <AppShell />
+      </View>
+    </SafeAreaProvider>
+  )
+}
+
 const RootLayout = () => {
   return (
-    <AuthProvider>
-      <GatheringProvider>
-        <SafeAreaProvider>
-            <AppShell/>
-        </SafeAreaProvider>
-      </GatheringProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <GatheringProvider>
+          <ThemedAppShell />
+        </GatheringProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
 
