@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Screen } from '@/components/ui/screen'
 import { Stack } from '@/components/ui/stack'
 import { Text } from '@/components/ui/text'
+import { Spacer } from '@/components/ui/spacer'
 
 interface Attendee {
     first_name: string
@@ -105,8 +106,17 @@ const GatheringDetails = () => {
     }
 
     return (
-        <Screen>
+        <Screen style={{ maxWidth: 1000, alignSelf: 'center' }}>
             <Stack direction="row" align="center" justify="space-between" gap="sm">
+                <Button
+                    variant={"outline"}
+                    onPress={() => router.replace("/(tabs)/dashboard")}
+                >
+                    BACK
+                </Button>
+                <Text variant="title" style={{ flex: 1, textAlign: 'center', fontSize: 18 }}>
+                    {activeGathering.name}
+                </Text>
                 <View style={{ minWidth: 88 }}>
                     {isHost && !isEdit && (
                         <Button onPress={() => setIsEdit(prev => !prev)}>
@@ -114,17 +124,8 @@ const GatheringDetails = () => {
                         </Button>
                     )}
                 </View>
-                <Text variant="title" style={{ flex: 1, textAlign: 'center', fontSize: 18 }}>
-                    {activeGathering.name}
-                </Text>
-                <Button
-                    variant={isHost ? 'danger' : 'outline'}
-                    onPress={() => router.replace("/(tabs)/dashboard")}
-                >
-                    LEAVE
-                </Button>
             </Stack>
-
+            <Spacer size="md" />
             <ScrollView 
                 style={{ width: '100%', flex: 1 }} 
                 contentContainerStyle={{ paddingBottom: theme.spacing.xl }}
