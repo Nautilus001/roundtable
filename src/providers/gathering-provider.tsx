@@ -105,15 +105,25 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         try {
             const {data, error} = await putGathering(payload)
             if (error || !data) throw Error()
-            if (Array.isArray(data)) {
-                setActive(data[0].id ?? "")
-            } else {
-                setActive(data.id ?? "")
+            const row = (Array.isArray(data) ? data[0] : data) as Gathering
+            const saved = {
+                name: row.name,
+                start_time: row.start_time,
+                location: row.location,
+                attire: row.attire,
             }
+            setActiveGathering(current =>
+                current && current.id === row.id ? { ...current, ...saved } : current
+            )
+            setGatherings(current =>
+                current.map(gathering =>
+                    gathering.id === row.id ? { ...gathering, ...saved } : gathering
+                )
+            )
         } catch (error: any) {
             console.error("Error on updateGathering: ", error)
+            throw error
         } finally {
-            fetchGatherings()
             setIsLoading(false)
         }
     }
