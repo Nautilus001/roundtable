@@ -55,7 +55,9 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, 
                 location: locationName.trim(),
                 attire: attire
             })
-            router.replace("/dashboard")
+            if (isNew) {
+                router.replace("/dashboard")
+            }
         } catch (error) {
             console.error("Error submitting the gathering:", error)
         } finally {
