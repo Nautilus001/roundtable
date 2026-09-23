@@ -1,11 +1,15 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { useThemeContext } from '@/hooks/use-theme'
+import { Theme } from '@/constants/theme'
 
 interface CountdownWidgetProps {
     time: Date
 }
 
 export const CountdownWidget: React.FC<CountdownWidgetProps> = ({time}) => {  
+    const { theme } = useThemeContext()
+    const styles = useMemo(() => createStyles(theme), [theme])
     const targetDate = new Date(time)
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
 
@@ -73,14 +77,15 @@ export const CountdownWidget: React.FC<CountdownWidgetProps> = ({time}) => {
     )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
     eventTile: {
-        backgroundColor: '#1e1e1e',
-        padding: 16,
-        borderRadius: 12,
+        backgroundColor: theme.colors.accent,
+        padding: theme.spacing.md,
+        borderRadius: theme.radius.lg,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: '#000',
+        alignSelf: 'center',
+        shadowColor: theme.colors.textPrimary,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
@@ -95,39 +100,39 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     digitRectangle: {
-        backgroundColor: '#333333',
-        paddingHorizontal: 8,
-        paddingVertical: 10,
-        borderRadius: 6,
+        backgroundColor: theme.colors.action,
+        paddingHorizontal: theme.spacing.sm,
+        paddingVertical: theme.spacing.sm,
+        borderRadius: theme.radius.md,
         marginHorizontal: 2,
         minWidth: 28,
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 1,
-        borderColor: '#444444',
+        borderColor: theme.colors.secondary,
     },
     digitText: {
-        color: '#ffffff',
+        color: theme.colors.onAction,
         fontSize: 20,
         fontWeight: 'bold',
         fontFamily: 'monospace',
     },
     colon: {
-        color: '#ffffff',
+        color: theme.colors.onAction,
         fontSize: 20,
         fontWeight: 'bold',
-        marginHorizontal: 4,
-        paddingBottom: 4, 
+        marginHorizontal: theme.spacing.xs,
+        paddingBottom: theme.spacing.xs, 
     },
     labelContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
-        paddingHorizontal: 6,
-        marginTop: 6,
+        paddingHorizontal: theme.spacing.xs,
+        marginTop: theme.spacing.xs,
     },
     label: {
-        color: '#888888',
+        color: theme.colors.primary,
         fontSize: 10,
         fontWeight: '600',
         textTransform: 'uppercase',

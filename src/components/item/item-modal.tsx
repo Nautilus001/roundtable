@@ -1,9 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Platform } from 'react-native'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Modal, StyleSheet, View, ActivityIndicator, Platform } from 'react-native'
 import { Picker } from '@react-native-picker/picker'
 import { postItem, putItem } from '@/services/items'
 import { getRankables, Rankable } from '@/services/categories'
 import { Item } from '@/models/item'
+import { useThemeContext } from '@/hooks/use-theme'
+import { Theme } from '@/constants/theme'
+import { Button } from '@/components/ui/button'
+import { FieldGroup } from '@/components/ui/field-group'
+import { Stack } from '@/components/ui/stack'
+import { Text } from '@/components/ui/text'
+import { TextField } from '@/components/ui/text-field'
 
 interface ItemModalProps {
   visible: boolean
@@ -20,6 +27,8 @@ export const ItemModal: React.FC<ItemModalProps> = ({ visible, gatheringId, onCl
   const [isFetchingCategories, setIsFetchingCategories] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const { theme } = useThemeContext()
+  const styles = useMemo(() => createStyles(theme), [theme])
 
   const isEditMode = !!item;
 
@@ -103,145 +112,86 @@ export const ItemModal: React.FC<ItemModalProps> = ({ visible, gatheringId, onCl
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.title}>{isEditMode ? 'Edit Item' : 'Add New Item'}</Text>
+          <Stack gap="md">
+            <Text variant="title">{isEditMode ? 'Edit Item' : 'Add New Item'}</Text>
 
-          {errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>}
+            {errorMsg && <Text variant="error">{errorMsg}</Text>}
 
-          <Text style={styles.label}>Item Name</Text>
-          <TextInput
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="e.g. Ribeye Steak"
-          />
+            <FieldGroup label="Item Name">
+              <TextField
+                value={name}
+                onChangeText={setName}
+                placeholder="e.g. Ribeye Steak"
+              />
+            </FieldGroup>
 
-          {isFetchingCategories ? (
-            <ActivityIndicator style={styles.loader} color="#4f46e5" size="small" />
-          ) : categories && categories.length > 0 ? (
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={categoryId}
-                onValueChange={(itemValue) => setCategoryId(itemValue)}
-                style={styles.picker}
-                itemStyle={styles.pickerItem}
+            {isFetchingCategories ? (
+              <ActivityIndicator color={theme.colors.action} size="small" />
+            ) : categories && categories.length > 0 ? (
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={categoryId}
+                  onValueChange={(itemValue) => setCategoryId(itemValue)}
+                  style={styles.picker}
+                  itemStyle={styles.pickerItem}
+                >
+                  {categories.map((cat) => (
+                    <Picker.Item key={cat.id} label={cat.name} value={cat.id} color={theme.colors.textPrimary} />
+                  ))}
+                </Picker>
+              </View>
+            ) : null}
+
+            <Stack direction="row" gap="md" justify="flex-end">
+              <Button variant="ghost" onPress={onClose} disabled={isLoading}>
+                Cancel
+              </Button>
+              <Button
+                onPress={handleSubmit}
+                loading={isLoading}
+                disabled={isFetchingCategories}
               >
-                {categories.map((cat) => (
-                  <Picker.Item key={cat.id} label={cat.name} value={cat.id} color="#111827" />
-                ))}
-              </Picker>
-            </View>
-          ) : null}
-
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose} disabled={isLoading}>
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={styles.submitButton} 
-              onPress={handleSubmit} 
-              disabled={isLoading || isFetchingCategories}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#fff" size="small" />
-              ) : (
-                <Text style={styles.submitText}>{isEditMode ? 'Save Changes' : 'Add Item'}</Text>
-              )}
-            </TouchableOpacity>
-          </View>
+                {isEditMode ? 'Save Changes' : 'Add Item'}
+              </Button>
+            </Stack>
+          </Stack>
         </View>
       </View>
     </Modal>
   )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 16,
+    padding: theme.spacing.md,
   },
   modalContent: {
     width: '100%',
     maxWidth: 384,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.radius.lg,
+    padding: theme.spacing.lg,
     elevation: 5,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#111827',
-  },
-  label: {
-    fontSize: 12,
-    color: '#6b7280',
-    marginBottom: 4,
-    marginTop: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 6,
-    padding: 10,
-    fontSize: 14,
-    backgroundColor: '#f9fafb',
   },
   pickerContainer: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 6,
-    backgroundColor: '#f9fafb',
-    // Remove overflow: 'hidden' on iOS so the native wheel isn't clipped
+    borderColor: theme.colors.border,
+    borderRadius: theme.radius.md,
+    backgroundColor: theme.colors.background,
     overflow: Platform.OS === 'ios' ? 'visible' : 'hidden',
   },
   picker: {
     width: '100%',
-    // iOS requires dynamic height for the wheel picker
     height: Platform.OS === 'ios' ? 90 : 50,
+    color: theme.colors.textPrimary,
   },
   pickerItem: {
-    // Styling specifically for iOS wheel items
     height: 90,
     fontSize: 16,
-    color: '#111827',
-  },
-  loader: {
-    marginVertical: 12,
-  },
-  errorText: {
-    color: '#ef4444',
-    fontSize: 12,
-    marginBottom: 8,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 12,
-    marginTop: 20,
-  },
-  cancelButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-  },
-  cancelText: {
-    color: '#4b5563',
-    fontWeight: '600',
-  },
-  submitButton: {
-    backgroundColor: '#ff385c',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-    minWidth: 80,
-    alignItems: 'center',
-  },
-  submitText: {
-    color: '#ffffff',
-    fontWeight: '600',
+    color: theme.colors.textPrimary,
   },
 })

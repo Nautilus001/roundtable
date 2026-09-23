@@ -1,17 +1,20 @@
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native'
+import { ActivityIndicator, ScrollView, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useGatheringContext } from '@/hooks/use-gathering-context'
+import { useThemeContext } from '@/hooks/use-theme'
 import { GatheringForm } from '@/components/gathering/gathering-form'
 import { Gathering } from '@/models/gathering'
 import { Item } from '@/models/item'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { globalStyle } from '@/styles'
 import CountdownWidget from '@/components/gathering/countdown-widget'
 import AttendeeTile from '@/components/gathering/attendee-tile'
 import ItemTile from '@/components/item/item-tile'
 import { getItems } from '@/services/items'
 import { ItemModal } from '@/components/item/item-modal'
+import { Button } from '@/components/ui/button'
+import { Screen } from '@/components/ui/screen'
+import { Stack } from '@/components/ui/stack'
+import { Text } from '@/components/ui/text'
 
 interface Attendee {
     first_name: string
@@ -22,6 +25,7 @@ interface Attendee {
 const GatheringDetails = () => {
     const { id } = useLocalSearchParams<{ id: string }>()
     const { activeGathering, updateGathering, setActive, getGatheringAttendees } = useGatheringContext()
+    const { theme } = useThemeContext()
     
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -86,115 +90,91 @@ const GatheringDetails = () => {
 
     if (isLoading) {
         return (
-            <View style={styles.centerContainer}>
-                <ActivityIndicator size="large" color="#4f46e5" />
-            </View>
+            <Screen style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color={theme.colors.action} />
+            </Screen>
         )
     }
 
     if (!activeGathering) {
         return (
-            <View style={styles.centerContainer}>
-                <Text style={styles.errorText}>No active gathering found.</Text>
-            </View>
+            <Screen style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <Text variant="body">No active gathering found.</Text>
+            </Screen>
         )
     }
 
     return (
-        <SafeAreaView style={[globalStyle.container, styles.container]}>
-            <View style={[styles.headerRow]}>
-                <View>
-                    {isHost && !isEdit && 
-                        <TouchableOpacity 
-                            style={[
-                                styles.button, 
-                                isHost ? styles.activeButton : styles.inactiveButton
-                            ]} 
-                            onPress={() => setIsEdit(prev => !prev)}
-                            activeOpacity={0.8}
-                        >
-                            <Text style={[
-                                styles.buttonText, 
-                                isHost ? styles.activeText : styles.inactiveText
-                            ]}>
-                                {"Edit"}
-                            </Text>
-                        </TouchableOpacity>
-                    }
+        <Screen>
+            <Stack direction="row" align="center" justify="space-between" gap="sm">
+                <View style={{ minWidth: 88 }}>
+                    {isHost && !isEdit && (
+                        <Button onPress={() => setIsEdit(prev => !prev)}>
+                            Edit
+                        </Button>
+                    )}
                 </View>
-                <View style={styles.headerTitleContainer}>
-                    <Text style={styles.headerTitleText}> {activeGathering.name} </Text>
-                </View>
-                <View>
-                    <TouchableOpacity 
-                        style={[
-                            styles.button, 
-                            isHost ? styles.activeButton : styles.inactiveButton
-                        ]} 
-                        onPress={() => router.replace("/(tabs)/dashboard")}
-                        activeOpacity={0.8}
-                    >
-                        <Text style={[
-                            styles.buttonText, 
-                            isHost ? styles.activeText : styles.inactiveText
-                        ]}>
-                            {"LEAVE"}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+                <Text variant="title" style={{ flex: 1, textAlign: 'center', fontSize: 18 }}>
+                    {activeGathering.name}
+                </Text>
+                <Button
+                    variant={isHost ? 'danger' : 'outline'}
+                    onPress={() => router.replace("/(tabs)/dashboard")}
+                >
+                    LEAVE
+                </Button>
+            </Stack>
 
             <ScrollView 
-                style={styles.scrollView} 
-                contentContainerStyle={styles.scrollContent}
+                style={{ width: '100%', flex: 1 }} 
+                contentContainerStyle={{ paddingBottom: theme.spacing.xl }}
                 showsVerticalScrollIndicator={false}
             >
-                <CountdownWidget time={activeGathering.start_time} />
-                
-                <GatheringForm 
-                    initialData={activeGathering}
-                    onSubmit={handleSubmit} 
-                    isEdit={isEdit}
-                    isNew={false}
-                />
+                <Stack gap="md">
+                    <CountdownWidget time={activeGathering.start_time} />
+                    
+                    <GatheringForm 
+                        initialData={activeGathering}
+                        onSubmit={handleSubmit} 
+                        isEdit={isEdit}
+                        isNew={false}
+                    />
 
-                <Text style={styles.sectionTitle}>Attendees</Text>
-                {attendees && attendees.length > 0 ? (
-                    attendees.map((item, index) => (
-                        <View key={`attendee-${index}`} style={styles.tileWrapper}>
+                    <Text variant="title" style={{ fontSize: 18 }}>Attendees</Text>
+                    {attendees && attendees.length > 0 ? (
+                        attendees.map((item, index) => (
                             <AttendeeTile 
+                                key={`attendee-${index}`}
                                 name={`${item.first_name} ${item.last_name}`} 
                                 role={item.role} 
                             />
-                        </View>
-                    ))
-                ) : (
-                    <Text style={styles.emptyStateText}>No attendees registered yet.</Text>
-                )}
+                        ))
+                    ) : (
+                        <Text variant="label">No attendees registered yet.</Text>
+                    )}
 
-                <View style={styles.sectionHeaderRow}>
-                    <Text style={styles.sectionTitle}>Items</Text>
-                    {isHost && <TouchableOpacity 
-                        style={styles.addButton} 
-                        onPress={() => setIsAddModalOpen(true)}
-                    >
-                        <Text style={styles.addButtonText}>+ Add Item</Text>
-                    </TouchableOpacity>}
-                </View>
-                {items && items.length > 0 ? (
-                    items.map((item, index) => (
-                        <View key={`item-${item.id || index}`} style={styles.tileWrapper}>
-                        <ItemTile 
-                            item={item} 
-                            onItemUpdated={handleItemUpdated}
-                            onItemRemoved={() => handleItemRemoved(item.id ?? "")}
-                            canEdit={isHost}
-                        />
-                        </View>
-                    ))
-                ) : (
-                    <Text style={styles.emptyStateText}>No items added yet.</Text>
-                )}
+                    <Stack direction="row" align="center" justify="space-between">
+                        <Text variant="title" style={{ fontSize: 18 }}>Items</Text>
+                        {isHost && (
+                            <Button onPress={() => setIsAddModalOpen(true)}>
+                                + Add Item
+                            </Button>
+                        )}
+                    </Stack>
+                    {items && items.length > 0 ? (
+                        items.map((item, index) => (
+                            <ItemTile 
+                                key={`item-${item.id || index}`}
+                                item={item} 
+                                onItemUpdated={handleItemUpdated}
+                                onItemRemoved={() => handleItemRemoved(item.id ?? "")}
+                                canEdit={isHost}
+                            />
+                        ))
+                    ) : (
+                        <Text variant="label">No items added yet.</Text>
+                    )}
+                </Stack>
             </ScrollView>
             {activeGathering?.id && (
                 <ItemModal 
@@ -204,124 +184,8 @@ const GatheringDetails = () => {
                     onSave={handleItemAdded}
                 />
             )}
-        </SafeAreaView>
+        </Screen>
     )
 }
 
 export default GatheringDetails
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        width: '100%',        
-        height: '100%',  
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        paddingHorizontal: 16,    
-    },
-    centerContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        width: '100%',
-    },
-    headerRow: {
-        flexDirection: "row",
-        width: "100%",
-        justifyContent: "space-between",
-        alignItems: "center",
-        maxHeight: 100,
-        marginVertical: 10,
-    },
-    headerTitleContainer: {
-        flex: 1,
-        alignItems: 'center',
-    },
-    headerTitleText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#111827',
-    },
-    errorText: {
-        color: '#6b7280',
-        fontSize: 16,
-    },
-    button: {
-        paddingVertical: 10,
-        paddingHorizontal: 16,
-        borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1.5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 1.41,
-        elevation: 1,
-    },
-    activeButton: {
-        backgroundColor: '#ff385c', 
-        borderColor: '#ff385c',
-    },
-    inactiveButton: {
-        backgroundColor: 'transparent',
-        borderColor: '#555555',
-    },
-    buttonText: {
-        fontSize: 12,
-        fontWeight: 'bold',
-    },
-    activeText: {
-        color: '#ffffff',
-    },
-    inactiveText: {
-        color: '#555555',
-    },
-    scrollView: {
-        width: '100%',
-        flex: 1,
-    },
-    scrollContent: {
-        paddingBottom: 32,
-        alignItems: 'center',
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#111827',
-        alignSelf: 'flex-start',
-        marginTop: 24,
-        marginBottom: 12,
-    },
-    tileWrapper: {
-        width: '100%',
-        marginBottom: 8,
-    },
-    emptyStateText: {
-        color: '#6b7280',
-        fontSize: 14,
-        marginTop: 16,
-        marginBottom: 16,
-        textAlign: 'center',
-    },
-    sectionHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    marginTop: 24,
-    marginBottom: 12,
-  },
-  addButton: {
-    backgroundColor: '#4f46e5',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-  },
-  addButtonText: {
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-})

@@ -1,14 +1,14 @@
 import {getDarkTheme, getLightTheme, LAYOUTS, PALETTES} from '@/constants/theme';
 import {ThemeContext, ThemeMode} from '@/contexts/theme-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, type FC, type ReactNode} from 'react';
 import { useColorScheme as useDeviceColorScheme } from 'react-native';
 
 const MODE_STORAGE_KEY = '@user_theme_mode';
 const PALETTE_STORAGE_KEY = '@user_palette_index';
 const LAYOUT_STORAGE_KEY = '@user_layout_index';
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const deviceScheme = useDeviceColorScheme();
   const [mode, setModeState] = useState<ThemeMode>('system');
   const [paletteIndex, setPaletteIndexState] = useState<number>(0);
@@ -61,15 +61,15 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const cycleLayout = () => {
-    const nextIndex = (paletteIndex + 1) % LAYOUTS.length;
+    const nextIndex = (layoutIndex + 1) % LAYOUTS.length;
     setLayoutIndex(nextIndex);
-  }
+  };
 
   const activeScheme = mode === 'system' ? deviceScheme ?? 'light' : mode;
   const isDark = activeScheme === 'dark';
   
   const activePalette = PALETTES[paletteIndex];
-  const activeLayout = LAYOUTS[layoutIndex];
+  const activeLayout = LAYOUTS[0];
   const theme = isDark ? getDarkTheme(activePalette, activeLayout) : getLightTheme(activePalette, activeLayout);
 
   return (
@@ -80,9 +80,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         isDark,
         activePalette,
         paletteIndex,
+        activeLayout,
+        layoutIndex,
         setMode,
         cyclePalette,
+        cycleLayout,
         setPaletteIndex,
+        setLayoutIndex,
       }}
     >
       {children}

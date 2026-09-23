@@ -61,6 +61,11 @@ const baseColors = {
   black: '#000000',
 };
 
+const dangerColors = {
+  light: '#B91C1C',
+  dark: '#F87171',
+};
+
 const palette1: Palette = {
     lightPrimary: '#EACEAA',
     darkSecondary: '#85431E',
@@ -96,12 +101,16 @@ export const getLightTheme = (palette: Palette, layout: LayoutTokens) => ({
     secondary: palette.lightSecondary,
     accent: palette.random,
     border: '#E5E7EB',
+    action: palette.darkSecondary,
+    onAction: baseColors.white,
+    danger: dangerColors.light,
+    onDanger: baseColors.white,
   },
 })
 
-export type Theme = typeof getLightTheme
+export type Theme = ReturnType<typeof getLightTheme>
 
-export const getDarkTheme: Theme = (palette: Palette, layout: LayoutTokens) => ({
+export const getDarkTheme = (palette: Palette, layout: LayoutTokens): Theme => ({
   ...layout,
   colors: {
     background: baseColors.gray900,
@@ -112,8 +121,11 @@ export const getDarkTheme: Theme = (palette: Palette, layout: LayoutTokens) => (
     secondary: palette.darkSecondary,
     accent: palette.random,
     border: '#374151',
+    action: palette.lightSecondary,
+    onAction: palette.darkPrimary,
+    danger: dangerColors.dark,
+    onDanger: palette.darkPrimary,
   },
 })
 
 export const PALETTES: Palette[] = [palette1, palette2, palette3]
-

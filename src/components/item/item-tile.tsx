@@ -1,9 +1,10 @@
-// src/components/item/item-tile.tsx
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert } from 'react-native'
 import { Item } from '@/models/item'
 import { useGatheringContext } from '@/hooks/use-gathering-context'
-import { ItemModal } from '@/components/item/item-modal' // <-- Import the new modal
+import { useThemeContext } from '@/hooks/use-theme'
+import { ItemModal } from '@/components/item/item-modal'
+import { Theme } from '@/constants/theme'
 
 interface ItemTileProps {
   item: Item;
@@ -15,6 +16,8 @@ interface ItemTileProps {
 export const ItemTile: React.FC<ItemTileProps> = ({ item, onItemUpdated, onItemRemoved, canEdit = true }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const { theme } = useThemeContext()
+  const styles = useMemo(() => createStyles(theme), [theme])
   
   const { removeItem } = useGatheringContext();
 
@@ -50,7 +53,7 @@ export const ItemTile: React.FC<ItemTileProps> = ({ item, onItemUpdated, onItemR
           <Text style={styles.name}>{item.name}</Text>
           <View style={styles.actionsContainer}>
             {isDeleting ? (
-              <ActivityIndicator size="small" color="#ff2020" />
+              <ActivityIndicator size="small" color={theme.colors.danger} />
             ) : (
               canEdit && (
                 <>
@@ -70,11 +73,10 @@ export const ItemTile: React.FC<ItemTileProps> = ({ item, onItemUpdated, onItemR
         <Text style={styles.date}>Added: {formattedDate}</Text>
       </View>
 
-      {/* Embedded Modal Component */}
       <ItemModal
         visible={isEditModalVisible}
-        gatheringId={item.gathering_id as string} // Assuming your item has a gathering_id
-        item={item} // <-- Triggers Edit Mode in the modal
+        gatheringId={item.gathering_id as string}
+        item={item}
         onClose={() => setIsEditModalVisible(false)}
         onSave={handleEditSaved}
       />
@@ -84,16 +86,15 @@ export const ItemTile: React.FC<ItemTileProps> = ({ item, onItemUpdated, onItemR
 
 export default ItemTile;
 
-// Cleaned up styles (removed inline-edit related styles)
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
   tile: {
-    padding: 16,
+    padding: theme.spacing.md,
     maxWidth: 384,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    shadowColor: '#000000',
+    borderColor: theme.colors.border,
+    borderRadius: theme.radius.md,
+    shadowColor: theme.colors.textPrimary,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -107,29 +108,29 @@ const styles = StyleSheet.create({
   actionsContainer: {
     flexDirection: 'column',
     alignItems: 'flex-end',
-    gap: 12, 
+    gap: theme.spacing.md, 
   },
   name: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#111827',
+    color: theme.colors.textPrimary,
     flex: 1,
-    marginRight: 8,
+    marginRight: theme.spacing.sm,
   },
   editAction: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#4f46e5',
+    color: theme.colors.action,
   },
   removeAction: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#ff2020',
+    color: theme.colors.danger,
   },
   date: {
     fontSize: 12,
-    color: '#6b7280',
+    color: theme.colors.textSecondary,
     fontWeight: '500',
-    marginTop: 8,
+    marginTop: theme.spacing.sm,
   },
 });

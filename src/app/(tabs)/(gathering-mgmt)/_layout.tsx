@@ -1,4 +1,3 @@
-import { StyleSheet} from 'react-native'
 import React from 'react'
 import { Stack } from 'expo-router'
 import { useAuthContext } from '@/hooks/use-auth-context'
@@ -16,5 +15,3 @@ const GatheringManagementNavigator = () => {
 }
 
 export default GatheringManagementNavigator
-
-const styles = StyleSheet.create({})

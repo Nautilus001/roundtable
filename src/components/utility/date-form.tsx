@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native'
 import DatePicker from '@/components/utility/date-picker'
+import { useThemeContext } from '@/hooks/use-theme'
+import { Theme } from '@/constants/theme'
 
 interface DateFormProps {
     date: Date
@@ -11,6 +13,8 @@ interface DateFormProps {
 export const DateForm: React.FC<DateFormProps> = ({ date, onChange, label = "Date & Time" }) => {
     const [showDatePicker, setShowDatePicker] = useState<boolean>(false)
     const [showTimePicker, setShowTimePicker] = useState<boolean>(false)
+    const { theme } = useThemeContext()
+    const styles = useMemo(() => createStyles(theme), [theme])
 
     const parsedDate = date ? new Date(date) : null;
 
@@ -74,43 +78,43 @@ export const DateForm: React.FC<DateFormProps> = ({ date, onChange, label = "Dat
     )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
     inputGroup: {
-        marginBottom: 20,
+        marginBottom: theme.spacing.lg,
     },
     label: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#374151',
-        marginBottom: 8,
+        color: theme.colors.textSecondary,
+        marginBottom: theme.spacing.sm,
     },
     iosPickerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 12,
-        paddingVertical: 4,
+        gap: theme.spacing.md,
+        paddingVertical: theme.spacing.xs,
     },
     androidPickerContainer: {
         flexDirection: 'row',
-        gap: 12,
+        gap: theme.spacing.md,
     },
     webPickerContainer: {
         flexDirection: 'row',
-        gap: 12,
+        gap: theme.spacing.md,
     },
     pickerButton: {
         flex: 1,
         borderWidth: 1,
-        borderColor: '#d1d5db',
-        borderRadius: 8,
-        paddingHorizontal: 14,
-        paddingVertical: 12,
-        backgroundColor: '#f9fafb',
+        borderColor: theme.colors.border,
+        borderRadius: theme.radius.md,
+        paddingHorizontal: theme.spacing.md,
+        paddingVertical: theme.spacing.md,
+        backgroundColor: theme.colors.background,
         alignItems: 'center',
     },
     pickerButtonText: {
         fontSize: 16,
-        color: '#111827',
+        color: theme.colors.textPrimary,
         fontWeight: '500',
     },
 })

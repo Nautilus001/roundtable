@@ -1,10 +1,18 @@
 import { Attire, Gathering } from '@/models/gathering'
 import { getAttireTypes } from '@/services/enums'
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, ActivityIndicator } from 'react-native'
+import React, { useEffect, useMemo, useState } from 'react'
+import { StyleSheet, ScrollView } from 'react-native'
 import { DateForm } from '../utility/date-form'
 import { useGatheringContext } from '@/hooks/use-gathering-context'
+import { useThemeContext } from '@/hooks/use-theme'
 import { router } from 'expo-router'
+import { Theme } from '@/constants/theme'
+import { Button } from '@/components/ui/button'
+import { FieldGroup } from '@/components/ui/field-group'
+import { SegmentedControl } from '@/components/ui/segmented-control'
+import { Text } from '@/components/ui/text'
+import { TextField } from '@/components/ui/text-field'
+import { Stack } from '@/components/ui/stack'
 
 interface GatheringFormProps {
     initialData?: Gathering
@@ -20,6 +28,8 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, 
     const [attire, setAttire] = useState<Attire>(initialData?.attire ?? 'CASUAL')
     const [attireOptions, setAttireOptions] = useState<Attire[]>([])
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+    const { theme } = useThemeContext()
+    const styles = useMemo(() => createStyles(theme), [theme])
 
     const { activeGathering, removeGathering } = useGatheringContext()
 
@@ -65,135 +75,91 @@ export const GatheringForm: React.FC<GatheringFormProps> = ({ onSubmit, isEdit, 
         }
     }
 
+    const formattedDate = date ? new Date(date).toLocaleDateString(undefined, { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    }) : "No date set"
+
     if (isEdit) {
         return (
             <ScrollView 
-                style={[styles.scrollView]}
+                style={styles.scrollView}
                 contentContainerStyle={styles.scrollContainer}
                 showsVerticalScrollIndicator={false}
             >
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Gathering Name</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Gala Dinner"
-                        placeholderTextColor="#9ca3af"
-                        value={name}
-                        onChangeText={setName}
-                    />
-                </View>
+                <Stack gap="lg">
+                    <FieldGroup label="Gathering Name">
+                        <TextField
+                            placeholder="Gala Dinner"
+                            value={name}
+                            onChangeText={setName}
+                        />
+                    </FieldGroup>
 
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Location / Venue</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="e.g., Metropolitan Hall"
-                        placeholderTextColor="#9ca3af"
-                        value={locationName}
-                        onChangeText={setLocationName}
-                    />
-                </View>
+                    <FieldGroup label="Location / Venue">
+                        <TextField
+                            placeholder="e.g., Metropolitan Hall"
+                            value={locationName}
+                            onChangeText={setLocationName}
+                        />
+                    </FieldGroup>
 
-                <View style={styles.inputGroup}>
                     <DateForm date={date} onChange={setDate} />
-                </View>
 
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Attire Requirement</Text>
-                    <View style={styles.segmentedControl}>
-                        {attireOptions.map((option) => {
-                            const isActive = attire === option;
-                            return (
-                                <TouchableOpacity
-                                    key={option}
-                                    style={[
-                                        styles.segmentButton,
-                                        isActive && styles.segmentButtonActive
-                                    ]}
-                                    onPress={() => setAttire(option)}
-                                >
-                                    <Text style={[
-                                        styles.segmentText,
-                                        isActive && styles.segmentTextActive
-                                    ]}>
-                                        {option}
-                                    </Text>
-                                </TouchableOpacity>
-                            )
-                        })}
-                    </View>
-                </View>
+                    <FieldGroup label="Attire Requirement">
+                        {attireOptions.length > 0 && (
+                            <SegmentedControl
+                                options={attireOptions}
+                                value={attire}
+                                onChange={setAttire}
+                            />
+                        )}
+                    </FieldGroup>
 
-                <TouchableOpacity 
-                    style={styles.submitButton} 
-                    onPress={handleSubmit}
-                    disabled={isSubmitting}
-                >
-                    {isSubmitting ? <ActivityIndicator size="small" color="#ffffff" /> :
-                        <Text style={styles.submitButtonText}>
-                            {isNew ? "Create" : "Update"} Gathering
-                        </Text>
-                    }
-                </TouchableOpacity>
+                    <Button onPress={handleSubmit} loading={isSubmitting}>
+                        {isNew ? "Create" : "Update"} Gathering
+                    </Button>
 
-                {!isNew &&
-                    <TouchableOpacity 
-                        style={styles.deleteButton} 
-                        onPress={handleDelete}
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting ? <ActivityIndicator size="small" color="#ffffff" /> :
-                            <Text style={styles.deleteButtonText}>
-                                Delete Gathering
-                            </Text>
-                        }
-                    </TouchableOpacity>
-                }
+                    {!isNew && (
+                        <Button variant="danger" onPress={handleDelete} loading={isSubmitting}>
+                            Delete Gathering
+                        </Button>
+                    )}
+                </Stack>
             </ScrollView>
         )
     }
 
     return (
         <ScrollView 
-            style={[styles.scrollView]}
-            contentContainerStyle={[styles.scrollContainer, {alignItems: 'center'}]}
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContainer}
             showsVerticalScrollIndicator={false}
         >
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Gathering Name</Text>
-                <Text style={styles.readOnlyText}>{name || "Unnamed Gathering"}</Text>
-            </View>
+            <Stack gap="lg">
+                <FieldGroup label="Gathering Name">
+                    <TextField value={name || "Unnamed Gathering"} readOnly />
+                </FieldGroup>
 
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Location / Venue</Text>
-                <Text style={styles.readOnlyText}>{locationName || "No venue specified"}</Text>
-            </View>
+                <FieldGroup label="Location / Venue">
+                    <TextField value={locationName || "No venue specified"} readOnly />
+                </FieldGroup>
 
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Date & Time</Text>
-                <Text style={styles.readOnlyText}>
-                    {date ? new Date(date).toLocaleDateString(undefined, { 
-                        weekday: 'long', 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                    }) : "No date set"}
-                </Text>
-            </View>
+                <FieldGroup label="Date & Time">
+                    <TextField value={formattedDate} readOnly />
+                </FieldGroup>
 
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Attire Requirement</Text>
-                <View style={styles.segmentedControlReadOnly}>
-                    <View style={[styles.segmentButtonReadOnly, styles.segmentButtonActive]}>
-                        <Text style={styles.segmentTextActive}>{attire}</Text>
-                    </View>
-                </View>
-            </View>
+                <FieldGroup label="Attire Requirement">
+                    <Text variant="body">{attire}</Text>
+                </FieldGroup>
+            </Stack>
         </ScrollView>
     )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
     scrollView: {
         flex: 1,
         width: '100%',
@@ -201,101 +167,9 @@ const styles = StyleSheet.create({
         maxWidth: 750
     },
     scrollContainer: {
-        paddingHorizontal: 4,
-        paddingTop: 16,
-        paddingBottom: 40,
+        paddingHorizontal: theme.spacing.xs,
+        paddingTop: theme.spacing.md,
+        paddingBottom: theme.spacing.xl,
         width: '100%',
-    },
-    inputGroup: {
-        marginBottom: 24,
-        width: '100%',
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#374151',
-        marginBottom: 8,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#d1d5db',
-        borderRadius: 8,
-        paddingHorizontal: 14,
-        paddingVertical: 12,
-        fontSize: 16,
-        color: '#111827',
-        backgroundColor: '#f9fafb',
-        width: '100%',
-    },
-    segmentedControl: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 8,
-    },
-    segmentButton: {
-        paddingVertical: 8,
-        paddingHorizontal: 14,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: '#d1d5db',
-        backgroundColor: '#ffffff',
-    },
-    segmentButtonActive: {
-        backgroundColor: '#4f46e5',
-        borderColor: '#4f46e5',
-    },
-    segmentText: {
-        fontSize: 13,
-        fontWeight: '500',
-        color: '#4b5563',
-    },
-    segmentTextActive: {
-        color: '#ffffff',
-        fontWeight: '600',
-    },
-    submitButton: {
-        backgroundColor: '#4f46e5',
-        paddingVertical: 16,
-        borderRadius: 8,
-        alignItems: 'center',
-        marginTop: 12,
-        width: '100%',
-    },
-    submitButtonText: {
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    deleteButton: {
-        backgroundColor: '#ef4444',
-        paddingVertical: 14,
-        borderRadius: 8,
-        alignItems: 'center',
-        marginTop: 12,
-        width: '100%',
-    },
-    deleteButtonText: {
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    readOnlyText: {
-        fontSize: 16,
-        color: '#1f2937', 
-        paddingVertical: 12,
-        paddingHorizontal: 4,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f3f4f6', 
-        width: '100%',
-    },
-    segmentedControlReadOnly: {
-        flexDirection: 'row',
-        width: '100%',
-    },
-    segmentButtonReadOnly: {
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 20,
-        alignItems: 'center',
     },
 })

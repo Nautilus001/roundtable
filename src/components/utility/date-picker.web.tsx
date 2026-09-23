@@ -1,4 +1,5 @@
 import { createElement } from 'react'
+import { useThemeContext } from '@/hooks/use-theme'
 
 interface PickerProps {
     value: Date | string
@@ -7,6 +8,7 @@ interface PickerProps {
 }
 
 export default function DatePicker({ value, mode, onChange }: PickerProps) {
+    const { theme } = useThemeContext()
 
     const dateObject = typeof value === 'string' ? new Date(value) : value
 
@@ -55,12 +57,12 @@ export default function DatePicker({ value, mode, onChange }: PickerProps) {
         flex: 1,
         width: '100%',
         height: 45,
-        padding: '10px 14px',
+        padding: `${theme.spacing.sm}px ${theme.spacing.md}px`,
         fontSize: '16px',
-        border: '1px solid #d1d5db',
-        borderRadius: '8px',
-        backgroundColor: '#f9fafb',
-        color: '#111827',
+        border: `1px solid ${theme.colors.border}`,
+        borderRadius: `${theme.radius.md}px`,
+        backgroundColor: theme.colors.background,
+        color: theme.colors.textPrimary,
         fontFamily: 'system-ui, sans-serif',
         boxSizing: 'border-box',
         cursor: 'pointer',

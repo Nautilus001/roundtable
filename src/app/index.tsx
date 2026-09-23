@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useAuthContext } from '@/hooks/use-auth-context'
 import LogoFork from '@/components/visual/logo-fork'
 import LogoDrink from '@/components/visual/logo-drink'
 import LogoFork2 from '@/components/visual/logo-fork-2'
 import LogoNegFork from '@/components/visual/logo-fork-negative'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { Button } from '@/components/ui/button'
+import { Screen } from '@/components/ui/screen'
+import { Stack } from '@/components/ui/stack'
+import { Text } from '@/components/ui/text'
+import { TextField } from '@/components/ui/text-field'
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
@@ -52,113 +56,37 @@ export default function LoginScreen() {
   }
 
   return (
-    <SafeAreaView  style={styles.container}>
-      <View style={styles.container}>
-
-        <View style={styles.logoContainer}>
+    <Screen style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <Stack gap="lg" style={{ maxWidth: 500 }}>
+        <View style={{ alignItems: 'center' }}>
           <TouchableOpacity onPress={handleRotate}>
             {logos[logo]}
           </TouchableOpacity>
         </View>
-        
-        <View style={styles.formContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-    
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}>{isRegister ? "Sign Up" : "Login"}</Text>
-          </TouchableOpacity>
-
-          {error &&
-          <View style={styles.buttonSecondary}>
-          <Text style= {styles.errorText}>An error has occurred: {error}</Text>
-          </View>}
-
-          
-          <TouchableOpacity style={styles.buttonSecondary} onPress={handleSwitch}>
-            <Text> {isRegister ? "Been here before?" : "New here?" } </Text>
-            <Text style={styles.buttonSecondaryText}>{isRegister ? "Login" : "Sign Up!"}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </SafeAreaView>
+        <TextField
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+        />
+        <TextField
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <Button onPress={handleSubmit}>
+          {isRegister ? "Sign Up" : "Login"}
+        </Button>
+        {error && (
+          <Text variant="error">An error has occurred: {error}</Text>
+        )}
+        <Button variant="ghost" onPress={handleSwitch}>
+          {isRegister ? "Been here before? Login" : "New here? Sign Up!"}
+        </Button>
+      </Stack>
+    </Screen>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  logoContainer: {
-    padding: 20      
-  },
-  formContainer: {
-    width: '100%',
-    maxWidth: 500,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    textAlign: 'center',
-  },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    height: 50,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonSecondary: {
-    height: 50,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  buttonSecondaryText: {
-    color: '#007AFF',
-    fontSize: 18,
-    fontWeight: '600',
-    fontStyle: 'italic',
-  },
-  errorText: {
-    color: '#d61d1d',
-    fontSize: 14,
-    fontWeight: '400',
-    fontStyle: 'italic',
-  }
-})
