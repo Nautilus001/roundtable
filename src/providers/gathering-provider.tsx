@@ -36,24 +36,10 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         }
     }
 
-    async function fetchItems() {
-        setIsLoading(true)
-        try { 
-            if(activeGathering) {
-                const { data, error } = (await getItems(activeGathering.id ?? ""))
-                if (error || !data) throw Error()
-                if (Array.isArray(data)) setItems(data)
-            }
-        } catch (error: any) {
-            console.error("Unexpected error in fetchGatherings:", error)
-        } finally {
-            setIsLoading(false)
-        }
-    }
+    
 
     useEffect(() => {
         fetchGatherings()
-        fetchItems()
     }, [])
 
 
@@ -148,54 +134,7 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         }
     }
 
-    const createItem = async (payload: Item) => {
-        setIsLoading(true)
-        try {
-            const {data, error} = await postItem(payload)
-            if (error || !data) throw Error()
-            if (Array.isArray(data)) {
-                setActive(data[0].id ?? "")
-            } else {
-                setActive(data.id ?? "")
-            }
-        } catch (error: any) {
-            console.error("Error on createItem: ", error)
-        } finally {
-            getItems(activeGathering?.id ?? "")
-            setIsLoading(false)
-        }
-    }
-
-    const updateItem = async (payload: Item) => {
-        setIsLoading(true)
-        try {
-            const {data, error} = await putItem(payload)
-            if (error || !data) throw Error()
-            if (Array.isArray(data)) {
-                setActive(data[0].id ?? "")
-            } else {
-                setActive(data.id ?? "")
-            }
-        } catch (error: any) {
-            console.error("Error on updateItem: ", error)
-        } finally {
-            getItems(activeGathering?.id ?? "")
-            setIsLoading(false)
-        }
-    }
-
-    const removeItem = async (payload: Item) => {
-        setIsLoading(true)
-        try {
-            const {error} = await deleteItem(payload)
-            if (error) throw Error()
-        } catch (error: any) {
-            console.error("Error on createItem: ", error)
-        } finally {
-            getItems(activeGathering?.id ?? "")
-            setIsLoading(false)
-        }
-    }
+    
 
     const getGatheringAttendees = async (payload: string) => {
         setIsLoading(true)
@@ -244,7 +183,6 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         <GatheringContext.Provider value={{
             isLoading, 
             gatherings, 
-            items,
             activeGathering, 
             setActive, 
             fetchGatherings, 
@@ -252,10 +190,6 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
             joinGathering,
             updateGathering, 
             removeGathering,
-            fetchItems, 
-            createItem, 
-            updateItem, 
-            removeItem,
             fetchCategories, 
             createCategory, 
             updateCategory, 
