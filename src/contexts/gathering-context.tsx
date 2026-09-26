@@ -1,3 +1,4 @@
+import {Category} from '@/models/category';
 import { Gathering } from '@/models/gathering'
 import { Item } from '@/models/item'
 import { createContext } from 'react'
@@ -21,6 +22,10 @@ interface GatheringContextType {
   createItem: (payload: Item) => Promise<any>
   updateItem: (payload: Item) => Promise<any>
   removeItem: (payload: Item) => Promise<any>
+  fetchCategories: (gathering_id: string) => Promise<any>
+  createCategory: (payload: Category) => Promise<any>
+  updateCategory: (payload: Category) => Promise<any>
+  removeCategory: (payload: Category) => Promise<any>
   getGatheringAttendees: (payload: string) => Promise<any>
 }
 
@@ -39,5 +44,9 @@ export const GatheringContext = createContext<GatheringContextType>({
   createItem: async () => {},
   updateItem: async () => {},
   removeItem: async () => {},
+  fetchCategories:  async () => {},
+  createCategory: async () => {},
+  updateCategory: async () => {},
+  removeCategory: async () => {},
   getGatheringAttendees: async () => {},
 })

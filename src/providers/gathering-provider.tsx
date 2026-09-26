@@ -10,6 +10,7 @@ import { fetchEventAttendeesWithRoles } from '@/services/profiles'
 import { Profile } from '@/models/profile'
 import { Item } from '@/models/item'
 import { deleteItem, getItems, postItem, putItem } from '@/services/items'
+import {Category} from '@/models/category'
 
 export const GatheringProvider = ({ children }: { children: React.ReactNode }) => {
 
@@ -17,7 +18,7 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
     const [gatherings, setGatherings] = useState<Gathering[]>([])
     const [items, setItems] = useState<Item[]>([])
     const [activeGathering, setActiveGathering] = useState<Gathering | null>(null)
-
+    const [categories, setCategories] = useState<Category | null>(null)
     const { profile } = useAuthContext()
 
     async function fetchGatherings() {
@@ -60,6 +61,21 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         const g = gatherings.find(item => item.id === gathering_id) ?? null
         console.log(g)
         setActiveGathering(g)
+    }
+
+    const fetchCategories = async () => {
+        setIsLoading(true)
+        try { 
+            if(profile) {
+                const { data, error } = (await getGatherings(profile.id)) //TODO: Change this to an RPC supabase function call
+                if (error || !data) throw Error()
+                if (Array.isArray(data)) setGatherings(data)
+            }
+        } catch (error: any) {
+            console.error("Unexpected error in fetchGatherings:", error)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     const createGathering = async (payload: Gathering) => {
@@ -212,6 +228,18 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         }
     }
 
+    const createCategory = async () => {
+        //TODO
+    }
+
+    const updateCategory = async () => {
+        //TODO
+    }
+
+    const removeCategory = async () => {
+        //TODO
+    } 
+
     return (
         <GatheringContext.Provider value={{
             isLoading, 
@@ -228,6 +256,10 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
             createItem, 
             updateItem, 
             removeItem,
+            fetchCategories, 
+            createCategory, 
+            updateCategory, 
+            removeCategory,
             getGatheringAttendees,
         }}>
             {children}
