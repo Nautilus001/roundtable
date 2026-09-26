@@ -190,10 +190,6 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
             joinGathering,
             updateGathering, 
             removeGathering,
-            fetchCategories, 
-            createCategory, 
-            updateCategory, 
-            removeCategory,
             getGatheringAttendees,
         }}>
             {children}

@@ -17,11 +17,6 @@ interface GatheringContextType {
   joinGathering: (gatheringCode: string) => Promise<JoinGatheringResult>
   updateGathering: (payload: Gathering) => Promise<any>
   removeGathering: (payload: Gathering) => Promise<any>
-  
-  fetchCategories: (gathering_id: string) => Promise<any>
-  createCategory: (payload: Category) => Promise<any>
-  updateCategory: (payload: Category) => Promise<any>
-  removeCategory: (payload: Category) => Promise<any>
   getGatheringAttendees: (payload: string) => Promise<any>
 }
 
@@ -35,9 +30,5 @@ export const GatheringContext = createContext<GatheringContextType>({
   joinGathering: async () => ({ ok: false, message: '' }),
   updateGathering: async () => {},
   removeGathering: async () => {},
-  fetchCategories:  async () => {},
-  createCategory: async () => {},
-  updateCategory: async () => {},
-  removeCategory: async () => {},
   getGatheringAttendees: async () => {},
 })
