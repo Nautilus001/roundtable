@@ -1,24 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import { GatheringContext } from '@/contexts/gathering-context'
-import { useAuthContext } from '@/hooks/use-auth-context'
-import { getGatherings, putGathering, deleteGathering } from '@/services/gathering'
-import { appGathering } from '@/gathering/app-gathering'
-import { GatheringError } from '@/gathering/gathering'
-import { toUiGathering } from '@/gathering/to-ui-gathering'
-import { EventRole, Gathering } from '@/models/gathering'
-import { fetchEventAttendeesWithRoles } from '@/services/profiles'
-import { Profile } from '@/models/profile'
-import { Item } from '@/models/item'
-import { deleteItem, getItems, postItem, putItem } from '@/services/items'
-import {Category} from '@/models/category'
+import {GatheringContext} from "@/contexts/gathering-context"
+import {appGathering} from "@/gathering/app-gathering"
+import {GatheringError} from "@/gathering/gathering"
+import {toUiGathering} from "@/gathering/to-ui-gathering"
+import {useAuthContext} from "@/hooks/use-auth-context"
+import {Gathering, EventRole} from "@/models/gathering"
+import {Profile} from "@/models/profile"
+import {getGatherings, putGathering, deleteGathering} from "@/services/gathering"
+import {fetchEventAttendeesWithRoles} from "@/services/profiles"
+import {useState, useEffect} from "react"
 
 export const GatheringProvider = ({ children }: { children: React.ReactNode }) => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [gatherings, setGatherings] = useState<Gathering[]>([])
-    const [items, setItems] = useState<Item[]>([])
     const [activeGathering, setActiveGathering] = useState<Gathering | null>(null)
-    const [categories, setCategories] = useState<Category | null>(null)
     const { profile } = useAuthContext()
 
     async function fetchGatherings() {
@@ -44,7 +39,7 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
 
 
     const setActive = (gathering_id: string) => {
-        const g = gatherings.find(item => item.id === gathering_id) ?? null
+        const g = gatherings.find(gathering => gathering.id === gathering_id) ?? null
         console.log(g)
         setActiveGathering(g)
     }
