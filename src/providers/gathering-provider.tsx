@@ -14,6 +14,8 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [gatherings, setGatherings] = useState<Gathering[]>([])
     const [activeGathering, setActiveGathering] = useState<Gathering | null>(null)
+    const [inProgress, setInProgress] = useState<boolean>(false)
+
     const { profile } = useAuthContext()
 
     async function fetchGatherings() {
@@ -42,6 +44,7 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         const g = gatherings.find(gathering => gathering.id === gathering_id) ?? null
         console.log(g)
         setActiveGathering(g)
+        setInProgress(g?.start_time && g.start_time > new Date() ? true : false)
     }
 
     const fetchCategories = async () => {
@@ -196,6 +199,7 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
             updateGathering, 
             removeGathering,
             getGatheringAttendees,
+            inProgress,
         }}>
             {children}
         </GatheringContext.Provider>

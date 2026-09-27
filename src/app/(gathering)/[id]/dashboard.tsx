@@ -25,7 +25,7 @@ interface Attendee {
 
 const GatheringDetails = () => {
     const { id } = useLocalSearchParams<{ id: string }>()
-    const { activeGathering, updateGathering, setActive, getGatheringAttendees } = useGatheringContext()
+    const { activeGathering, updateGathering, setActive, getGatheringAttendees, inProgress } = useGatheringContext()
     const { theme } = useThemeContext()
     
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -113,6 +113,14 @@ const GatheringDetails = () => {
         )
     }
 
+    if (inProgress) {
+        return (
+            <Screen style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <Text variant="body">This gathering is in progress.</Text>
+            </Screen>
+        )
+    }
+    
     return (
         <Screen style={{ maxWidth: 1000, alignSelf: 'center' }}>
             <Stack direction="row" align="center" justify="space-between" gap="sm">
