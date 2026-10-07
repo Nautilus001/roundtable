@@ -73,7 +73,7 @@ const Dashboard = () => {
                     showsVerticalScrollIndicator={false}
                 />
             ) : (
-                <Text variant="title">No events found.</Text>
+                <Text variant="title">No events found...</Text>
             )}
         </Screen>
     )
