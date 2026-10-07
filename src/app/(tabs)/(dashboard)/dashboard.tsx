@@ -32,6 +32,8 @@ const Dashboard = () => {
         loadData()
     },[profile])
 
+
+    
     return (
         <Screen style={{ alignItems: 'center'}}>
             <Stack gap="md" align="center">

@@ -100,7 +100,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
         flexDirection: 'row',
     },
     digitRectangle: {
-        backgroundColor: theme.colors.action,
+        backgroundColor: theme.colors.primary,
         paddingHorizontal: theme.spacing.sm,
         paddingVertical: theme.spacing.sm,
         borderRadius: theme.radius.md,
@@ -109,16 +109,16 @@ const createStyles = (theme: Theme) => StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 1,
-        borderColor: theme.colors.secondary,
+        borderColor: theme.colors.onAction,
     },
     digitText: {
-        color: theme.colors.onAction,
+        color: theme.colors.secondary,
         fontSize: 20,
         fontWeight: 'bold',
         fontFamily: 'monospace',
     },
     colon: {
-        color: theme.colors.onAction,
+        color: theme.colors.action,
         fontSize: 20,
         fontWeight: 'bold',
         marginHorizontal: theme.spacing.xs,
@@ -132,7 +132,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
         marginTop: theme.spacing.xs,
     },
     label: {
-        color: theme.colors.primary,
+        color: theme.colors.action,
         fontSize: 10,
         fontWeight: '600',
         textTransform: 'uppercase',

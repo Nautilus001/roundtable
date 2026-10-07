@@ -25,11 +25,12 @@ interface Attendee {
 
 const GatheringDetails = () => {
     const { id } = useLocalSearchParams<{ id: string }>()
-    const { activeGathering, updateGathering, setActive, getGatheringAttendees } = useGatheringContext()
+    const { activeGathering, updateGathering, setActive, getGatheringAttendees, inProgress } = useGatheringContext()
     const { theme } = useThemeContext()
     
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [isEdit, setIsEdit] = useState<boolean>(false)
+    const [formRevision, setFormRevision] = useState(0)
     const [attendees, setAttendees] = useState<Attendee[]>([])
     const [items, setItems] = useState<Item[]>([])
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -67,12 +68,19 @@ const GatheringDetails = () => {
             }
         }
         fetchGatheringData()
-    }, [id, activeGathering])
+    }, [id])
 
     const handleSubmit = async (payload: Gathering) => {
-        setIsLoading(true)
         await updateGathering(payload)
-        setIsLoading(false)
+        setIsEdit(false)
+        setFormRevision(revision => revision + 1)
+    }
+
+    const handleEditPress = () => {
+        if (isEdit) {
+            setFormRevision(revision => revision + 1)
+        }
+        setIsEdit(editing => !editing)
     }
 
     const handleItemAdded = (newItem: Item) => {
@@ -105,6 +113,14 @@ const GatheringDetails = () => {
         )
     }
 
+    if (inProgress) {
+        return (
+            <Screen style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <Text variant="body">This gathering is in progress.</Text>
+            </Screen>
+        )
+    }
+    
     return (
         <Screen style={{ maxWidth: 1000, alignSelf: 'center' }}>
             <Stack direction="row" align="center" justify="space-between" gap="sm">
@@ -118,9 +134,9 @@ const GatheringDetails = () => {
                     {activeGathering.name}
                 </Text>
                 <View style={{ minWidth: 88 }}>
-                    {isHost && !isEdit && (
-                        <Button onPress={() => setIsEdit(prev => !prev)}>
-                            Edit
+                    {isHost  && (
+                        <Button variant={isEdit ? "action" : "outline"} onPress={handleEditPress}>
+                            {isEdit ? "CANCEL" : "EDIT"}
                         </Button>
                     )}
                 </View>
@@ -134,7 +150,8 @@ const GatheringDetails = () => {
                 <Stack gap="md">
                     <CountdownWidget time={activeGathering.start_time} />
                     
-                    <GatheringForm 
+                    <GatheringForm
+                        key={formRevision}
                         initialData={activeGathering}
                         onSubmit={handleSubmit} 
                         isEdit={isEdit}

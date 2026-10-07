@@ -14,6 +14,8 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [gatherings, setGatherings] = useState<Gathering[]>([])
     const [activeGathering, setActiveGathering] = useState<Gathering | null>(null)
+    const [inProgress, setInProgress] = useState<boolean>(false)
+
     const { profile } = useAuthContext()
 
     async function fetchGatherings() {
@@ -42,6 +44,7 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         const g = gatherings.find(gathering => gathering.id === gathering_id) ?? null
         console.log(g)
         setActiveGathering(g)
+        setInProgress(g?.start_time && g.start_time > new Date() ? true : false)
     }
 
     const fetchCategories = async () => {
@@ -102,15 +105,25 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         try {
             const {data, error} = await putGathering(payload)
             if (error || !data) throw Error()
-            if (Array.isArray(data)) {
-                setActive(data[0].id ?? "")
-            } else {
-                setActive(data.id ?? "")
+            const row = (Array.isArray(data) ? data[0] : data) as Gathering
+            const saved = {
+                name: row.name,
+                start_time: row.start_time,
+                location: row.location,
+                attire: row.attire,
             }
+            setActiveGathering(current =>
+                current && current.id === row.id ? { ...current, ...saved } : current
+            )
+            setGatherings(current =>
+                current.map(gathering =>
+                    gathering.id === row.id ? { ...gathering, ...saved } : gathering
+                )
+            )
         } catch (error: any) {
             console.error("Error on updateGathering: ", error)
+            throw error
         } finally {
-            fetchGatherings()
             setIsLoading(false)
         }
     }
@@ -186,6 +199,7 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
             updateGathering, 
             removeGathering,
             getGatheringAttendees,
+            inProgress,
         }}>
             {children}
         </GatheringContext.Provider>
