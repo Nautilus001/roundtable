@@ -5,7 +5,6 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
-# Copy all source files
 COPY . .
 
 ARG EXPO_PUBLIC_SUPABASE_KEY
@@ -18,10 +17,13 @@ RUN npx expo export --platform web
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
 
-# Copy built static site
+# 1. Remove default Nginx welcome page and config
+RUN rm -rf /usr/share/nginx/html/* /etc/nginx/conf.d/default.conf
+
+# 2. Copy Expo web build output (dist/ folder) to Nginx web root
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# COPY YOUR CUSTOM NGINX CONFIG
+# 3. Copy your custom Nginx configuration file
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
