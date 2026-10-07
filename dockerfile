@@ -1,10 +1,12 @@
+# Stage 1: Build the Expo Web app
 FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
-COPY .  .
+# Copy all source files
+COPY . .
 
 ARG EXPO_PUBLIC_SUPABASE_KEY
 ARG EXPO_PUBLIC_SUPABASE_URL
@@ -13,7 +15,14 @@ ENV EXPO_PUBLIC_SUPABASE_URL=$EXPO_PUBLIC_SUPABASE_URL
 
 RUN npx expo export --platform web
 
+# Stage 2: Serve with Nginx
 FROM nginx:alpine
+
+# Copy built static site
 COPY --from=builder /app/dist /usr/share/nginx/html
+
+# COPY YOUR CUSTOM NGINX CONFIG
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
