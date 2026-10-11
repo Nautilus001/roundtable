@@ -24,6 +24,7 @@ function RootNavigator() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="(gathering)/[id]/dashboard" options={{ headerShown: false }} />
           <Stack.Screen name="getting-started"/>
+          <Stack.Screen name="crud" />
         </Stack.Protected>
       </Stack>
   )

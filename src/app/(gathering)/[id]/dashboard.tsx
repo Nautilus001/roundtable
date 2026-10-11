@@ -16,7 +16,6 @@ import { Screen } from '@/components/ui/screen'
 import { Stack } from '@/components/ui/stack'
 import { Text } from '@/components/ui/text'
 import { Spacer } from '@/components/ui/spacer'
-import { addRankable } from '@/services/categories'
 
 interface Attendee {
     first_name: string

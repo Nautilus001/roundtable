@@ -5,6 +5,8 @@ export interface Rankable {
   id: string
   name: string
   scale_id?: string
+  profile_id: string
+  gathering_id: string
 }
 
 export async function getRankables(
@@ -12,7 +14,7 @@ export async function getRankables(
 ): Promise<{ data: Rankable[] | null; error: Error | null }> {
   const { data, error } = await supabase
     .from('rankables')
-    .select('id, name')
+    .select('id, name, scale_id, profile_id, gathering_id')
     .eq('gathering_id', gathering_id)
     .order('name', { ascending: true })
 
@@ -44,7 +46,9 @@ export async function addRankable(
     data: {
       id: data.id ?? "",
       name: data.name,
-      scale_id: data.scale_id
+      scale_id: data.scale_id,
+      profile_id: data.profile_id,
+      gathering_id: data.gathering_id
     },
     error: null
   }
