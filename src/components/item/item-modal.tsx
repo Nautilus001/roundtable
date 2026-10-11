@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Modal, StyleSheet, View, ActivityIndicator, Platform } from 'react-native'
 import { Picker } from '@react-native-picker/picker'
 import { postItem, putItem } from '@/services/items'
-import { getRankables, Rankable } from '@/services/categories'
+import { addRankable, getRankables, Rankable } from '@/services/categories'
 import { Item } from '@/models/item'
 import { useThemeContext } from '@/hooks/use-theme'
 import { Theme } from '@/constants/theme'
@@ -164,6 +164,8 @@ export const ItemModal: React.FC<ItemModalProps> = ({ visible, gatheringId, onCl
 const createStyles = (theme: Theme) => StyleSheet.create({
   overlay: {
     flex: 1,
+    width: "100%",
+    height: '100%',
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
