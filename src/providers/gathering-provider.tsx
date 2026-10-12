@@ -1,80 +1,53 @@
 import {GatheringContext} from "@/contexts/gathering-context"
-import {appGathering} from "@/gathering/app-gathering"
-import {GatheringError} from "@/gathering/gathering"
-import {toUiGathering} from "@/gathering/to-ui-gathering"
 import {useAuthContext} from "@/hooks/use-auth-context"
 import {Gathering, EventRole} from "@/models/gathering"
 import {Profile} from "@/models/profile"
-import {getGatherings, putGathering, deleteGathering} from "@/services/gathering"
+import {createGathering, updateGathering, deleteGathering, readGatherings} from "@/services/gathering"
 import {fetchEventAttendeesWithRoles} from "@/services/profiles"
+import { normalizeArray } from "@/services/util"
 import {useState, useEffect} from "react"
 
 export const GatheringProvider = ({ children }: { children: React.ReactNode }) => {
 
+    const [gatheringError, setGatheringError] = useState<string>()
     const [gatherings, setGatherings] = useState<Gathering[]>([])
     const [activeGathering, setActiveGathering] = useState<Gathering | null>(null)
 
     const { profile } = useAuthContext()
 
-    async function fetchGatherings() {
-        try { 
-            if(profile) {
-                const { data, error } = (await getGatherings(profile.id))
-                if (error || !data) throw Error()
-                if (Array.isArray(data)) setGatherings(data)
-            }
-        } catch (error: any) {
-            console.error("Unexpected error in fetchGatherings:", error)
-        }
-    }
-
-    
-
     useEffect(() => {
         fetchGatherings()
     }, [])
 
+    async function fetchGatherings() {
+        const { data, error } = (await readGatherings(profile.id))
+        
+        if(error) {
+            setGatheringError("Error retrieving Gatherings.")
+            console.error("Unexpected error in gathering-providfer>fetchGatherings:", error)
+            return
+        }
 
-    const setActive = (gathering_id: string) => {
-        const g = gatherings.find(gathering => gathering.id === gathering_id) ?? null
-        console.log(g)
-        setActiveGathering(g)
+        setGatherings(normalizeArray(data))
     }
 
-    const createGathering = async (payload: Gathering) => {
+    const addGathering = async (payload: Gathering) => {
         if (!profile) throw new Error('Not signed in')
-        try {
-            const result = await appGathering.createGathering(profile.id, {
-                name: payload.name,
-                startTime: payload.start_time,
-                location: typeof payload.location === 'string' ? payload.location : '',
-                attire: payload.attire,
-            })
-            setActiveGathering(toUiGathering(result.gathering, result.role))
-        } catch (error: any) {
-            console.error("Error on createGathering: ", error)
-            throw error
-        } finally {
-            fetchGatherings()
-        }
-    }
+        const {data, error} = await createGathering({
+            name: payload.name,
+            start_time: payload.start_time,
+            location: typeof payload.location === 'string' ? payload.location : '',
+            attire: payload.attire,
+        })
 
-    const joinGathering = async (gatheringCode: string) => {
-        if (!profile) {
-            return { ok: false as const, message: 'You need to be signed in to join.' }
+        if(error) {
+            setGatheringError(error.message)
+            console.error("Error in gathering-provider>addGathering")
+            return
         }
-        try {
-            const result = await appGathering.joinGathering(profile.id, gatheringCode)
-            setActiveGathering(toUiGathering(result.gathering, result.role))
-            await fetchGatherings()
-            return { ok: true as const, gatheringId: result.gathering.id }
-        } catch (error: any) {
-            if (error instanceof GatheringError && error.code === 'not_found') {
-                return { ok: false as const, message: error.message }
-            }
-            console.error('Error on joinGathering: ', error)
-            return { ok: false as const, message: 'Something went wrong connecting to the server.' }
-        }
+
+        setActiveGathering(data)
+        
     }
 
     const updateGathering = async (payload: Gathering) => {
@@ -112,6 +85,12 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         }
     }
 
+    const setActive = (gathering_id: string) => {
+        const g = gatherings.find(gathering => gathering.id === gathering_id) ?? null
+        console.log(g)
+        setActiveGathering(g)
+    }
+
     const getGatheringAttendees = async (payload: string) => {
         try {
             const {data, error} = await fetchEventAttendeesWithRoles(payload)
@@ -140,10 +119,29 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         }
     }
 
+    const joinGathering = async (gatheringCode: string) => {
+        if (!profile) {
+            return { ok: false as const, message: 'You need to be signed in to join.' }
+        }
+        try {
+            const result = await appGathering.joinGathering(profile.id, gatheringCode)
+            setActiveGathering(toUiGathering(result.gathering, result.role))
+            await fetchGatherings()
+            return { ok: true as const, gatheringId: result.gathering.id }
+        } catch (error: any) {
+            if (error instanceof GatheringError && error.code === 'not_found') {
+                return { ok: false as const, message: error.message }
+            }
+            console.error('Error on joinGathering: ', error)
+            return { ok: false as const, message: 'Something went wrong connecting to the server.' }
+        }
+    }
+
     return (
         <GatheringContext.Provider value={{
             gatherings, 
             activeGathering, 
+            gatheringError,
             setActive, 
             fetchGatherings, 
             createGathering, 
