@@ -10,7 +10,6 @@ export type JoinGatheringResult =
 interface GatheringContextType {
   gatherings: Gathering[] | null
   activeGathering: Gathering | null
-  inProgress: boolean
   setActive: (gathering_id: string) => void
   fetchGatherings: () => Promise<any>
   createGathering: (payload: Gathering) => Promise<any>
@@ -23,7 +22,6 @@ interface GatheringContextType {
 export const GatheringContext = createContext<GatheringContextType>({
   gatherings: [],
   activeGathering: null,
-  inProgress: false,
   setActive: () => {},
   fetchGatherings:  async () => {},
   createGathering: async () => {},

@@ -11,15 +11,12 @@ import {useState, useEffect} from "react"
 
 export const GatheringProvider = ({ children }: { children: React.ReactNode }) => {
 
-    const [isLoading, setIsLoading] = useState<boolean>(false)
     const [gatherings, setGatherings] = useState<Gathering[]>([])
     const [activeGathering, setActiveGathering] = useState<Gathering | null>(null)
-    const [inProgress, setInProgress] = useState<boolean>(false)
 
     const { profile } = useAuthContext()
 
     async function fetchGatherings() {
-        setIsLoading(true)
         try { 
             if(profile) {
                 const { data, error } = (await getGatherings(profile.id))
@@ -28,8 +25,6 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
             }
         } catch (error: any) {
             console.error("Unexpected error in fetchGatherings:", error)
-        } finally {
-            setIsLoading(false)
         }
     }
 
@@ -48,7 +43,6 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
     }
 
     const fetchCategories = async () => {
-        setIsLoading(true)
         try { 
             if(profile) {
                 const { data, error } = (await getGatherings(profile.id)) //TODO: Change this to an RPC supabase function call
@@ -57,14 +51,11 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
             }
         } catch (error: any) {
             console.error("Unexpected error in fetchGatherings:", error)
-        } finally {
-            setIsLoading(false)
         }
     }
 
     const createGathering = async (payload: Gathering) => {
         if (!profile) throw new Error('Not signed in')
-        setIsLoading(true)
         try {
             const result = await appGathering.createGathering(profile.id, {
                 name: payload.name,
@@ -78,7 +69,6 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
             throw error
         } finally {
             fetchGatherings()
-            setIsLoading(false)
         }
     }
 
@@ -101,7 +91,6 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
     }
 
     const updateGathering = async (payload: Gathering) => {
-        setIsLoading(true)
         try {
             const {data, error} = await putGathering(payload)
             if (error || !data) throw Error()
@@ -123,29 +112,22 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         } catch (error: any) {
             console.error("Error on updateGathering: ", error)
             throw error
-        } finally {
-            setIsLoading(false)
         }
     }
 
     const removeGathering = async (payload: Gathering) => {
-        setIsLoading(true)
         try {
             const {error} = await deleteGathering(payload)
             if (error) throw Error()
             setActive("")
         } catch (error: any) {
             console.error("Error on createGathering: ", error)
-        } finally {
-            fetchGatherings()
-            setIsLoading(false)
         }
     }
 
     
 
     const getGatheringAttendees = async (payload: string) => {
-        setIsLoading(true)
         try {
             const {data, error} = await fetchEventAttendeesWithRoles(payload)
 
@@ -170,8 +152,6 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
 
         } catch (error: any) {
             console.error("Error on getGatheringAttendees: ", error)
-        } finally {
-            setIsLoading(false)
         }
     }
 
@@ -189,7 +169,6 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
 
     return (
         <GatheringContext.Provider value={{
-            isLoading, 
             gatherings, 
             activeGathering, 
             setActive, 
