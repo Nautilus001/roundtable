@@ -39,19 +39,6 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         const g = gatherings.find(gathering => gathering.id === gathering_id) ?? null
         console.log(g)
         setActiveGathering(g)
-        setInProgress(g?.start_time && g.start_time > new Date() ? true : false)
-    }
-
-    const fetchCategories = async () => {
-        try { 
-            if(profile) {
-                const { data, error } = (await getGatherings(profile.id)) //TODO: Change this to an RPC supabase function call
-                if (error || !data) throw Error()
-                if (Array.isArray(data)) setGatherings(data)
-            }
-        } catch (error: any) {
-            console.error("Unexpected error in fetchGatherings:", error)
-        }
     }
 
     const createGathering = async (payload: Gathering) => {
@@ -125,8 +112,6 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         }
     }
 
-    
-
     const getGatheringAttendees = async (payload: string) => {
         try {
             const {data, error} = await fetchEventAttendeesWithRoles(payload)
@@ -155,18 +140,6 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
         }
     }
 
-    const createCategory = async () => {
-        //TODO
-    }
-
-    const updateCategory = async () => {
-        //TODO
-    }
-
-    const removeCategory = async () => {
-        //TODO
-    } 
-
     return (
         <GatheringContext.Provider value={{
             gatherings, 
@@ -178,7 +151,6 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
             updateGathering, 
             removeGathering,
             getGatheringAttendees,
-            inProgress,
         }}>
             {children}
         </GatheringContext.Provider>

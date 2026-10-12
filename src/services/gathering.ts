@@ -1,5 +1,6 @@
 import {EventRole, Gathering} from "@/models/gathering"
 import { supabase } from "./supabase"
+import { GatheringFactory } from "@/factories/gathering-factory"
 
 interface GatheringsReturnType {
     data: Gathering[] | Gathering | null
@@ -38,27 +39,16 @@ export async function getGatherings(profile_id: string): Promise<GatheringsRetur
 
     if (error || !data) {
         console.error('Error fetching gatherings:', error.message)
+
+        
         return { data: null, error }
     }
         
     return { 
         data: data
-            .filter(item=>item.events != null) 
-            .map(item=> {
-                const gathering = item.events as any
-    
-                return {
-                    id: gathering.id,
-                    created_at: gathering.created_at,
-                    name: gathering.name,
-                    start_time: gathering.start_time,
-                    location: gathering.location,
-                    attire: gathering.attire,
-                    event_code: gathering.event_code,
-                    role: item.role,
-                    active: gathering.active
-                }
-            }),
+            .filter(item => item.events != null)
+            .map(item => GatheringFactory.fromSupabaseItem(item))
+            .filter((item): item is Gathering => item !== null),
         error: null
     }
 }
