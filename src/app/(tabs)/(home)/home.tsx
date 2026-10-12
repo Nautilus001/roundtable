@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Screen } from '@/components/ui/screen'
 import { Stack } from '@/components/ui/stack'
 import { Text } from '@/components/ui/text'
+import { Spacer } from '@/components/ui/spacer'
 
 const Home = () => {
     const { profile } = useAuthContext()
@@ -37,9 +38,10 @@ const Home = () => {
     return (
         <Screen style={{ alignItems: 'center'}}>
             <Stack gap="md" align="center">
-                <Text variant="title">Dashboard</Text>
+                <Text variant="title">Home</Text>
                 <Button onPress={() => loadData()}>Refresh</Button>
             </Stack>
+            <Spacer/>
             {(isLoading) ? (
                 <ActivityIndicator size="large" color={theme.colors.action} />
             ) : (gatherings && gatherings.length > 0) ? (
