@@ -10,7 +10,7 @@ import { Screen } from '@/components/ui/screen'
 import { Stack } from '@/components/ui/stack'
 import { Text } from '@/components/ui/text'
 
-const Dashboard = () => {
+const Home = () => {
     const { profile } = useAuthContext()
     const { theme } = useThemeContext()
     const { gatherings, fetchGatherings, setActive } = useGatheringContext()
@@ -79,4 +79,4 @@ const Dashboard = () => {
     )
 }
 
-export default Dashboard
+export default Home
