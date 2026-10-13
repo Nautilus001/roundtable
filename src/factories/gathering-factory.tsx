@@ -14,9 +14,9 @@ export class GatheringFactory {
             start_time: gathering.start_time,
             location: gathering.location,
             attire: gathering.attire,
-            event_code: gathering.event_code ?? "TBD",
+            event_code: gathering.event_code ?? "",
             role: item.role,
-            active: gathering.active ?? "Unknown",
+            inProgress: gathering.active ?? false,
             items: gathering.items ?? []
         }
     }
