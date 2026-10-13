@@ -16,7 +16,6 @@ import { Screen } from '@/components/ui/screen'
 import { Stack } from '@/components/ui/stack'
 import { Text } from '@/components/ui/text'
 import { Spacer } from '@/components/ui/spacer'
-import { addRankable } from '@/services/categories'
 
 interface Attendee {
     first_name: string
@@ -26,7 +25,7 @@ interface Attendee {
 
 const GatheringDetails = () => {
     const { id } = useLocalSearchParams<{ id: string }>()
-    const { activeGathering, updateGathering, setActive, getGatheringAttendees, inProgress } = useGatheringContext()
+    const { activeGathering, updateGathering, setActive, getGatheringAttendees } = useGatheringContext()
     const { theme } = useThemeContext()
     
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -114,7 +113,7 @@ const GatheringDetails = () => {
         )
     }
 
-    if (inProgress) {
+    if (activeGathering.inProgress) {
         return (
             <Screen style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <Text variant="body">This gathering is in progress.</Text>
@@ -127,7 +126,7 @@ const GatheringDetails = () => {
             <Stack direction="row" align="center" justify="space-between" gap="sm">
                 <Button
                     variant={"outline"}
-                    onPress={() => router.replace("/(tabs)/dashboard")}
+                    onPress={() => router.replace("/home")}
                 >
                     BACK
                 </Button>

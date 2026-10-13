@@ -1,151 +1,88 @@
 import {GatheringContext} from "@/contexts/gathering-context"
-import {appGathering} from "@/gathering/app-gathering"
-import {GatheringError} from "@/gathering/gathering"
-import {toUiGathering} from "@/gathering/to-ui-gathering"
 import {useAuthContext} from "@/hooks/use-auth-context"
 import {Gathering, EventRole} from "@/models/gathering"
 import {Profile} from "@/models/profile"
-import {getGatherings, putGathering, deleteGathering} from "@/services/gathering"
+import * as gatheringService from "@/services/gathering"
 import {fetchEventAttendeesWithRoles} from "@/services/profiles"
+import { normalizeArray } from "@/services/util"
 import {useState, useEffect} from "react"
 
 export const GatheringProvider = ({ children }: { children: React.ReactNode }) => {
 
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [gatheringError, setGatheringError] = useState<string>()
     const [gatherings, setGatherings] = useState<Gathering[]>([])
     const [activeGathering, setActiveGathering] = useState<Gathering | null>(null)
-    const [inProgress, setInProgress] = useState<boolean>(false)
 
     const { profile } = useAuthContext()
 
-    async function fetchGatherings() {
-        setIsLoading(true)
-        try { 
-            if(profile) {
-                const { data, error } = (await getGatherings(profile.id))
-                if (error || !data) throw Error()
-                if (Array.isArray(data)) setGatherings(data)
-            }
-        } catch (error: any) {
-            console.error("Unexpected error in fetchGatherings:", error)
-        } finally {
-            setIsLoading(false)
-        }
-    }
-
-    
-
     useEffect(() => {
-        fetchGatherings()
-    }, [])
+        if(profile) fetchGatherings()
+    }, [profile])
 
-
-    const setActive = (gathering_id: string) => {
-        const g = gatherings.find(gathering => gathering.id === gathering_id) ?? null
-        console.log(g)
-        setActiveGathering(g)
-        setInProgress(g?.start_time && g.start_time > new Date() ? true : false)
-    }
-
-    const fetchCategories = async () => {
-        setIsLoading(true)
-        try { 
-            if(profile) {
-                const { data, error } = (await getGatherings(profile.id)) //TODO: Change this to an RPC supabase function call
-                if (error || !data) throw Error()
-                if (Array.isArray(data)) setGatherings(data)
-            }
-        } catch (error: any) {
-            console.error("Unexpected error in fetchGatherings:", error)
-        } finally {
-            setIsLoading(false)
+    async function fetchGatherings() {
+        const { data, error } = (await gatheringService.fetchGatherings(profile.id))
+        
+        if(error) {
+            setGatheringError("Error retrieving Gatherings.")
+            console.error("Unexpected error in gathering-providfer>fetchGatherings:", error)
+            return
         }
+
+        setGatherings(normalizeArray(data))
     }
 
     const createGathering = async (payload: Gathering) => {
-        if (!profile) throw new Error('Not signed in')
-        setIsLoading(true)
-        try {
-            const result = await appGathering.createGathering(profile.id, {
-                name: payload.name,
-                startTime: payload.start_time,
-                location: typeof payload.location === 'string' ? payload.location : '',
-                attire: payload.attire,
-            })
-            setActiveGathering(toUiGathering(result.gathering, result.role))
-        } catch (error: any) {
-            console.error("Error on createGathering: ", error)
-            throw error
-        } finally {
-            fetchGatherings()
-            setIsLoading(false)
-        }
-    }
+        const {data, error} = await gatheringService.createGathering(payload)
 
-    const joinGathering = async (gatheringCode: string) => {
-        if (!profile) {
-            return { ok: false as const, message: 'You need to be signed in to join.' }
+        if(error) {
+            setGatheringError("Error creating gathering.")
+            console.error("Error in gathering-provider>createGathering")
+            return
         }
-        try {
-            const result = await appGathering.joinGathering(profile.id, gatheringCode)
-            setActiveGathering(toUiGathering(result.gathering, result.role))
-            await fetchGatherings()
-            return { ok: true as const, gatheringId: result.gathering.id }
-        } catch (error: any) {
-            if (error instanceof GatheringError && error.code === 'not_found') {
-                return { ok: false as const, message: error.message }
-            }
-            console.error('Error on joinGathering: ', error)
-            return { ok: false as const, message: 'Something went wrong connecting to the server.' }
-        }
+
+        setActiveGathering(data)
     }
 
     const updateGathering = async (payload: Gathering) => {
-        setIsLoading(true)
-        try {
-            const {data, error} = await putGathering(payload)
-            if (error || !data) throw Error()
-            const row = (Array.isArray(data) ? data[0] : data) as Gathering
-            const saved = {
-                name: row.name,
-                start_time: row.start_time,
-                location: row.location,
-                attire: row.attire,
-            }
-            setActiveGathering(current =>
-                current && current.id === row.id ? { ...current, ...saved } : current
-            )
+        const {data, error} = await gatheringService.updateGathering(payload)
+
+        if(error) {
+            setGatheringError("Error updating Gatherings.")
+            console.error("Unexpected error in gathering-providfer>updateGatherings:", error)
+            return
+        }
+
+        if(data) {
+            setActiveGathering(data)
+
             setGatherings(current =>
                 current.map(gathering =>
-                    gathering.id === row.id ? { ...gathering, ...saved } : gathering
+                    gathering.id === data.id ? { ...gathering, data } : gathering
                 )
             )
-        } catch (error: any) {
-            console.error("Error on updateGathering: ", error)
-            throw error
-        } finally {
-            setIsLoading(false)
         }
     }
 
-    const removeGathering = async (payload: Gathering) => {
-        setIsLoading(true)
-        try {
-            const {error} = await deleteGathering(payload)
-            if (error) throw Error()
-            setActive("")
-        } catch (error: any) {
-            console.error("Error on createGathering: ", error)
-        } finally {
-            fetchGatherings()
-            setIsLoading(false)
+    const deleteGathering = async (payload: Gathering) => {
+        const {error} = await gatheringService.deleteGathering(payload)
+        
+        if(error) {
+            setGatheringError("Error deleting Gathering.")
+            console.error("Unexpected error in gathering-providfer>deleteGatherings:", error)
+            return
         }
+
+        setActiveGathering(null)
+        
     }
 
-    
+    const setActive = (gathering_id: string) => {
+        const g = gatherings.find(gathering => 
+            gathering.id === gathering_id) ?? null
+        setActiveGathering(g)
+    }
 
     const getGatheringAttendees = async (payload: string) => {
-        setIsLoading(true)
         try {
             const {data, error} = await fetchEventAttendeesWithRoles(payload)
 
@@ -170,36 +107,38 @@ export const GatheringProvider = ({ children }: { children: React.ReactNode }) =
 
         } catch (error: any) {
             console.error("Error on getGatheringAttendees: ", error)
-        } finally {
-            setIsLoading(false)
         }
     }
 
-    const createCategory = async () => {
-        //TODO
-    }
+    const joinGathering = async (gatheringCode: string) => {
+        const { data, error } = (await gatheringService.joinEventByCode(gatheringCode))
+        
+        if(error || !data) {
+            setGatheringError("Error joining Gathering.")
+            console.error("Unexpected error in gathering-providfer>joinGatherings:", error)
+            return
+        }
 
-    const updateCategory = async () => {
-        //TODO
+        setActiveGathering(data)
+        setGatherings(current =>
+            current.map(gathering =>
+                gathering.id === data.id ? { ...gathering, data } : gathering
+            )
+        )
     }
-
-    const removeCategory = async () => {
-        //TODO
-    } 
 
     return (
         <GatheringContext.Provider value={{
-            isLoading, 
             gatherings, 
             activeGathering, 
+            gatheringError,
             setActive, 
             fetchGatherings, 
             createGathering, 
             joinGathering,
             updateGathering, 
-            removeGathering,
+            deleteGathering,
             getGatheringAttendees,
-            inProgress,
         }}>
             {children}
         </GatheringContext.Provider>
