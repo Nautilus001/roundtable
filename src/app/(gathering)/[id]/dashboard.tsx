@@ -127,7 +127,7 @@ const GatheringDetails = () => {
             <Stack direction="row" align="center" justify="space-between" gap="sm">
                 <Button
                     variant={"outline"}
-                    onPress={() => router.replace("/(tabs)/dashboard")}
+                    onPress={() => router.replace("/home")}
                 >
                     BACK
                 </Button>
