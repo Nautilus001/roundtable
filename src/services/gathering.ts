@@ -34,7 +34,7 @@ export async function createGathering(payload: Gathering) : Promise<{data: Gathe
 
     return { 
         data: GatheringFactory.fromSupabaseItem(data), 
-        error: null 
+        error: error 
     }
 }
 
@@ -66,7 +66,7 @@ export async function fetchGatherings(profile_id: string): Promise<{data: Gather
             .filter(item => item.events != null)
             .map(item => GatheringFactory.fromSupabaseItem(item))
             .filter((item): item is Gathering => item !== null),
-        error: null
+        error: error
     }
 }
 
@@ -91,7 +91,7 @@ export async function updateGathering(payload: Gathering) : Promise<{data: Gathe
 
     return {
         data: GatheringFactory.fromSupabaseItem(data), 
-        error: null
+        error: error
     }
 }
 
@@ -106,7 +106,7 @@ export async function deleteGathering(payload: Gathering) : Promise<{error: any}
         return {error}
     }
 
-    return {error: null}
+    return {error}
 }
 
 

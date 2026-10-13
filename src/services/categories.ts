@@ -1,51 +1,87 @@
+import { Category } from "@/models/category";
+import {CategoryFactory} from "../factories/category-factory";
 import { supabase } from "./supabase";
 import { normalizeArray } from "./util";
 
-export interface Rankable {
-  id: string
-  name: string
-  scale_id?: string
-}
-
-export async function getRankables(
-  gathering_id: string
-): Promise<{ data: Rankable[] | null; error: Error | null }> {
+export async function fetchCategories(gathering_id: string, profile_id: string): Promise<{ data: Category[] | null; error: any }> {
   const { data, error } = await supabase
-    .from('rankables')
+    .from('categories')
     .select('id, name')
     .eq('gathering_id', gathering_id)
+    .eq('profile_id', profile_id)
     .order('name', { ascending: true })
 
-  if (error) {
-    console.error('Error fetching rankables:', error.message)
+  if (error || !data) {
+    console.error('Error fetching categories:', error.message)
     return { data: null, error }
   }
 
-  return { data, error: null }
+  return { 
+    data: !data ? null : data
+      .map(item => CategoryFactory.fromSupabaseItem(item))
+      .filter((item): item is Category => item !== null),
+    error: null 
+  }
 }
 
-export async function addRankable(
-  gathering_id: string, scale_id: string, name: string, profile_id: string 
-) : Promise<{ data: Rankable | null; error: Error | null}> {
+export async function createCategory(
+  payload: Category
+) : Promise<{ data: Category | null; error: Error | null}> {
   const { data, error } = await supabase
-    .from('rankables')
+    .from('categories')
     .insert([
-      { scale_id: scale_id, name: name, gathering_id: gathering_id, profile_id: profile_id },
+      { 
+        scale_id: payload.scale_id, 
+        name: payload.name, 
+        gathering_id: payload.gathering_id, 
+        profile_id: payload.profile_id 
+      },
     ])
     .select()
     .single()
   
   if (error || !data) {
-    console.error('Error addihg rankable:', error?.message)
+    console.error('Error adding category:', error?.message)
     return { data: null, error }
   }
 
   return {
-    data: {
-      id: data.id ?? "",
-      name: data.name,
-      scale_id: data.scale_id
-    },
+    data: CategoryFactory.fromSupabaseItem(data),
     error: null
   }
+}
+
+export async function updateCategory(payload: Category): Promise<{data: Category | null, error: any}> {
+  const { data, error } = await supabase
+    .from('categories')
+    .update({
+      id: payload.id,
+      name: payload.name,
+      scale_id: payload.scale_id,
+      gathering_id: payload.gathering_id,
+      profile_id: payload.profile_id
+    })
+  
+  if(error || !data) {
+    console.error("Error updating Category: ", error?.message)
+    return { data: null, error }
+  }
+
+  return {
+    data: CategoryFactory.fromSupabaseItem(data),
+    error: error
+  }
+}
+
+export async function removeCategory(payload: Category): Promise<{error: any}> {
+  const { error } = await supabase
+    .from("categories")
+    .delete()
+    .eq("id", payload.id)
+
+  if (error) {
+    console.error("Error deleting category: ", error.message)
+  }
+
+  return {error}
 }
