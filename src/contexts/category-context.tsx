@@ -3,6 +3,7 @@ import { Category } from '@/models/category'
 
 interface CategoryContextType {
     categories: Category[] | null,
+    categoryError: string,
     fetchCategories: (gathering_id: string) => Promise<any>
     createCategory: (payload: Category) => Promise<any>
     updateCategory: (payload: Category) => Promise<any>
@@ -11,6 +12,7 @@ interface CategoryContextType {
 
 export const CategoryContext = createContext<CategoryContextType>({
     categories: [],
+    categoryError: "",
     fetchCategories:  async () => {},
     createCategory: async () => {},
     updateCategory: async () => {},

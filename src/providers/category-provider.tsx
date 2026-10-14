@@ -3,8 +3,6 @@ import {CategoryContext} from '@/contexts/category-context'
 import {Category} from '@/models/category'
 import { useAuthContext } from '@/hooks/use-auth-context'
 import * as categoryService from "@/services/categories"
-import { normalizeArray } from '@/services/util'
-import { supabase } from '@/services/supabase'
 
 const CategoryProvider = ({ children }: { children: React.ReactNode }) => {
 
@@ -71,6 +69,7 @@ const CategoryProvider = ({ children }: { children: React.ReactNode }) => {
     return (
         <CategoryContext.Provider value = {{
             categories,
+            categoryError,
             fetchCategories,
             createCategory,
             updateCategory,
