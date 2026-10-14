@@ -1,4 +1,4 @@
-# Taste-together App
+# TASTE app
 
 A modern, cross-platform mobile and web application built using **Expo (React Native)** and **TypeScript**, with a cloud backend powered by **Supabase**. The production web deployment is containerized with **Docker**, reverse-proxied via **Nginx**, and securely exposed from a self-hosted **Raspberry Pi** home server using a **Cloudflare Tunnel**.
 

@@ -9,7 +9,7 @@ const TabsLayout = () => {
     const { theme } = useThemeContext()
     return (
         <Tabs 
-            initialRouteName='(dashboard)'
+            initialRouteName='(home)'
             screenOptions={{
                 headerShown: false,
                 tabBarShowLabel: false,
@@ -38,7 +38,7 @@ const TabsLayout = () => {
                     }}
                 />
                 <Tabs.Screen
-                    name="(dashboard)"
+                    name="(home)"
                     options={{
                         tabBarIcon: (tabInfo) => {
                             return (
