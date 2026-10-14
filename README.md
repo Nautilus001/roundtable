@@ -35,7 +35,7 @@ The application features a fully automated build and deployment pipeline designe
 0. Create supabase project (out of the scope of this repo) and note the URL token and Publishable Key tokens.
 
 1. Clone the repository
-   `git clone https://github.com/Nautilus001/roundtable.git [DIR NAME]`
+   `git clone https://github.com/Nautilus001/taste-together.git [DIR NAME]`
    
 2. Create .env in project root, and add Supabase tokens.
    ```
