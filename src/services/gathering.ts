@@ -20,7 +20,7 @@ export async function joinEventByCode(eventCode: string) : Promise<{data: Gather
 
 export async function createGathering(payload: Gathering) : Promise<{data: Gathering | null, error: any}>{
     const { data, error } = await supabase //todo: refactor Supabase RPC so that I can just pass it the payload object
-        .rpc('create_event_with_owner', { 
+        .rpc('create_gathering_with_owner', { 
             p_name: payload.name,
             p_start_time: payload.start_time,
             p_location: payload.location,
@@ -33,7 +33,7 @@ export async function createGathering(payload: Gathering) : Promise<{data: Gathe
     }
 
     return { 
-        data: GatheringFactory.fromSupabaseItem(data), 
+        data: GatheringFactory.fromSupabaseItem({ role: "OWNER", ...data}), 
         error: error 
     }
 }
@@ -60,7 +60,7 @@ export async function fetchGatherings(profile_id: string): Promise<{data: Gather
         console.error('Error fetching gatherings:', error.message)
         return { data: null, error }
     }
-        
+
     return { 
         data: !data ? null : data
             .filter(item => item.gatherings != null)
