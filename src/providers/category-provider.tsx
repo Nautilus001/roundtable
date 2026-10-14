@@ -31,13 +31,11 @@ const CategoryProvider = ({ children }: { children: React.ReactNode }) => {
             return
         }
 
-        setCategories(current =>
-            current?.map(category => 
-                category.id === data.id ? { ...category, data } : category
-            )
-        )
+        setCategories(current => [...(current || []), data])
     }
+
     //TODO: Perhaps a single method for these two? Upsert?
+
     const updateCategory = async (payload: Category) => {
         const { data, error } = await categoryService.updateCategory(payload)
 
@@ -63,7 +61,11 @@ const CategoryProvider = ({ children }: { children: React.ReactNode }) => {
             return
         }
 
-        return {error: null} 
+        setCategories(current => 
+                current.filter(category => 
+                    category.id !== payload.id));
+    
+        return { error: null } 
     }
 
     return (

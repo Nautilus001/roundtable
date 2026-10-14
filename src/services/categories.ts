@@ -25,6 +25,7 @@ export async function fetchCategories(gathering_id: string, profile_id: string):
 export async function createCategory(
   payload: Category
 ) : Promise<{ data: Category | null; error: Error | null}> {
+  console.log("SERVICE: ", payload)
   const { data, error } = await supabase
     .from('categories')
     .insert([

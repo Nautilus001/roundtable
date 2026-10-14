@@ -1,7 +1,7 @@
 import { Gathering } from "@/models/gathering";
 export class GatheringFactory {
     static fromSupabaseItem(item: any): Gathering | null{
-        const gathering = item.events
+        const gathering = item.gatherings
 
         if (!gathering || !gathering.id) {
             console.warn("Error in Gathering Factory, object doesn't play nice: ", gathering)

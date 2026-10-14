@@ -25,9 +25,9 @@ export async function fetchProfile(userID: string) {
     return { data, error }
 }
 
-export async function fetchEventAttendeesWithRoles(eventID: string) {
-    const { data, error } = await supabase.rpc('get_event_members', {
-        p_event_id: eventID
+export async function fetchEventAttendeesWithRoles(gathering_id: string) {
+    const { data, error } = await supabase.rpc('get_gathering_members', {
+        p_gathering_id: gathering_id
     });
     
     return { data, error }

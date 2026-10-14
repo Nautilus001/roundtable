@@ -1,19 +1,20 @@
 import { Category } from "@/models/category";
 export class CategoryFactory {
     static fromSupabaseItem(item: any): Category | null {
-        const category = item.events
+        console.log(item)
 
-        if (!category || !category.id) {
-            console.warn("Error in Category Factory, object doesn't play nice: ", category)
+        if (!item || !item.id) {
+            console.warn("Error in Category Factory, object doesn't play nice: ", item)
             return null
         }
+
         return {
-            id: category.id,
-            created_at: category.created_at,
-            name: category.name,
-            scale_id: category.scale_id,
-            gathering_id: category.gathering_id,
-            profile_id: category.profile_id
+            id: item.id,
+            created_at: item.created_at,
+            name: item.name,
+            scale_id: item.scale_id,
+            gathering_id: item.gathering_id,
+            profile_id: item.profile_id
         }
     }
 }

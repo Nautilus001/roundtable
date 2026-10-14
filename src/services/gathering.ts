@@ -1,4 +1,4 @@
-import {EventRole, Gathering} from "@/models/gathering"
+import {Gathering} from "@/models/gathering"
 import { supabase } from "./supabase"
 import { GatheringFactory } from "@/factories/gathering-factory"
 
@@ -43,7 +43,7 @@ export async function fetchGatherings(profile_id: string): Promise<{data: Gather
         .from('roles')
         .select(`
             role, 
-            events (
+            gatherings (
                 id,
                 created_at,
                 name,
@@ -63,7 +63,7 @@ export async function fetchGatherings(profile_id: string): Promise<{data: Gather
         
     return { 
         data: !data ? null : data
-            .filter(item => item.events != null)
+            .filter(item => item.gatherings != null)
             .map(item => GatheringFactory.fromSupabaseItem(item))
             .filter((item): item is Gathering => item !== null),
         error: error
@@ -72,7 +72,7 @@ export async function fetchGatherings(profile_id: string): Promise<{data: Gather
 
 export async function updateGathering(payload: Gathering) : Promise<{data: Gathering | null, error: any}>{
     const { data, error } = await supabase
-        .from('events')
+        .from('gatherings')
         .update({ 
             id: payload.id,
             name: payload.name,
@@ -97,7 +97,7 @@ export async function updateGathering(payload: Gathering) : Promise<{data: Gathe
 
 export async function deleteGathering(payload: Gathering) : Promise<{error: any}>{
     const { error } = await supabase
-                .from('events')
+                .from('gatherings')
                 .delete()
                 .eq('id', payload.id ?? "")
 

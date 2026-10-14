@@ -1,6 +1,8 @@
+import TestCategoryScreen from '@/components/testing(temp)/test-cat-screen'
 import { useAuthContext } from '@/hooks/use-auth-context'
 import { useThemeContext } from '@/hooks/use-theme'
 import { AuthProvider } from '@/providers/auth-provider'
+import CategoryProvider from '@/providers/category-provider'
 import { GatheringProvider } from '@/providers/gathering-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { SplashScreen, Stack } from 'expo-router'
@@ -60,6 +62,9 @@ const RootLayout = () => {
       <AuthProvider>
         <GatheringProvider>
           <ThemedAppShell />
+          <CategoryProvider>
+            <TestCategoryScreen />
+          </CategoryProvider>
         </GatheringProvider>
       </AuthProvider>
     </ThemeProvider>
