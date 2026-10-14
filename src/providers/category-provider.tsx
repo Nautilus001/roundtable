@@ -9,20 +9,19 @@ import { supabase } from '@/services/supabase'
 const CategoryProvider = ({ children }: { children: React.ReactNode }) => {
 
     const [categories, setCategories] = useState<Category[]> ([])
-    const [categoryError, setCategoryError] = useState<string>("")
+    const [categoryError, setCategoryError] = useState<string>("") //might have to become Error
     const { profile } = useAuthContext()
 
     const fetchCategories = async (gathering_id: string ) => {
-        const { data, error} = await categoryService
-            .fetchCategories(gathering_id, profile.id)
+        const { data, error} = await categoryService.fetchCategories(gathering_id, profile.id)
 
-        if(error) {
+        if(error || !data) {
             setCategoryError("Error retrieving Categories.")
             console.error("Unexpected error in category-provider>fetchCategories:", error)
             return
         }
 
-        setCategories((data))
+        setCategories(data)
     }
 
     const createCategory = async (payload: Category) => {
