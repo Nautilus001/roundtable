@@ -1,15 +1,13 @@
 import { Category } from "@/models/category";
 import {CategoryFactory} from "../factories/category-factory";
 import { supabase } from "./supabase";
-import { normalizeArray } from "./util";
 
 export async function fetchCategories(gathering_id: string, profile_id: string): Promise<{ data: Category[] | null; error: any }> {
   const { data, error } = await supabase
     .from('categories')
-    .select('id, name')
+    .select('*')
     .eq('gathering_id', gathering_id)
     .eq('profile_id', profile_id)
-    .order('name', { ascending: true })
 
   if (error || !data) {
     console.error('Error fetching categories:', error.message)
@@ -52,15 +50,13 @@ export async function createCategory(
 }
 
 export async function updateCategory(payload: Category): Promise<{data: Category | null, error: any}> {
+  const { id, ...updatedData} = payload
+  
   const { data, error } = await supabase
     .from('categories')
-    .update({
-      id: payload.id,
-      name: payload.name,
-      scale_id: payload.scale_id,
-      gathering_id: payload.gathering_id,
-      profile_id: payload.profile_id
-    })
+    .update(updatedData)
+    .eq('id', id)
+    .select()
   
   if(error || !data) {
     console.error("Error updating Category: ", error?.message)

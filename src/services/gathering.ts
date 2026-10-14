@@ -108,7 +108,3 @@ export async function deleteGathering(payload: Gathering) : Promise<{error: any}
 
     return {error}
 }
-
-
-
- 
