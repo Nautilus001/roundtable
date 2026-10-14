@@ -57,7 +57,6 @@ const Home = () => {
                     renderItem={({item}) => (
                         <TouchableOpacity onPress={() => {
                             setActive(item.id ?? "")
-                            console.log(item)
                             router.push({
                                 pathname: '/(gathering)/[id]/dashboard',
                                 params: { id: item.id ?? "" }

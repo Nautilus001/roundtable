@@ -5,6 +5,7 @@ import { useGatheringContext } from '@/hooks/use-gathering-context'
 import { useThemeContext } from '@/hooks/use-theme'
 import { ItemModal } from '@/components/item/item-modal'
 import { Theme } from '@/constants/theme'
+import { useItemContext } from '@/hooks/use-items-context'
 
 interface ItemTileProps {
   item: Item;
@@ -19,7 +20,7 @@ export const ItemTile: React.FC<ItemTileProps> = ({ item, onItemUpdated, onItemR
   const { theme } = useThemeContext()
   const styles = useMemo(() => createStyles(theme), [theme])
   
-  const { removeItem } = useGatheringContext();
+  const { removeItem } = useItemContext();
 
   const formattedDate = new Date(item.created_at || Date.now()).toLocaleString([], {
     month: 'short',
@@ -28,7 +29,6 @@ export const ItemTile: React.FC<ItemTileProps> = ({ item, onItemUpdated, onItemR
   });
 
   const handleRemove = async () => {
-    console.log("execute remove")
     setIsDeleting(true);
     try {
       await removeItem(item);

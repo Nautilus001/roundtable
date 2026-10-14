@@ -1,8 +1,6 @@
 import { Category } from "@/models/category";
 export class CategoryFactory {
     static fromSupabaseItem(item: any): Category | null {
-        console.log(item)
-
         if (!item || !item.id) {
             console.warn("Error in Category Factory, object doesn't play nice: ", item)
             return null
